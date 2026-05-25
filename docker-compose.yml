@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # Cấu hình Database (Sử dụng MySQL)
+  db:
+    image: mysql:8.0
+    container_name: clb_thethao_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: clb_thethao_management
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # Cấu hình môi trường chạy ứng dụng (Ví dụ sử dụng Java/Node.js)
+  app:
+    image: node:18-alpine # Thay bằng openjdk:17 nếu nhóm code Java
+    container_name: clb_thethao_app
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
