@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý CLB Thể Thao</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <h2 class="text-center text-primary mb-4">HỆ THỐNG QUẢN LÝ CÂU LẠC BỘ THỂ THAO</h2>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card shadow-sm p-4 mb-4">
+                    <h4 class="text-success mb-3">Đăng Ký Hội Viên Mới</h4>
+                    <form id="formDangKy">
+                        <div class="mb-3">
+                            <label class="form-label">Họ và Tên</label>
+                            <input type="text" id="hoTen" class="form-control" placeholder="Nhập họ tên..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Số Điện Thoại</label>
+                            <input type="text" id="sdt" class="form-control" placeholder="Nhập số điện thoại..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="email" class="form-control" placeholder="Nhập email..." required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Đăng Ký & Cấp Mã Số Thẻ</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-sm p-4 bg-dark text-white" style="min-height: 315px;">
+                    <h4 class="text-warning mb-3">Màn Hình Log Hệ Thống</h4>
+                    <div id="logManHinh" style="font-family: monospace; font-size: 14px;">
+                        [Hệ thống] Sẵn sàng nhận dữ liệu đăng ký...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('formDangKy').addEventListener('submit', function(e) {
+            e.preventDefault(); // Chặn trang web bị tải lại
+            
+            const hoTen = document.getElementById('hoTen').value;
+            const sdt = document.getElementById('sdt').value;
+            const email = document.getElementById('email').value;
+
+            // Mô phỏng gửi dữ liệu lên Backend và nhận về mã thẻ tự tăng
+            const namHienTai = new Date().getFullYear();
+            const maTheNgauNhien = 'HV' + namHienTai + Math.floor(1000 + Math.random() * 9000);
+
+            // In kết quả trực quan lên màn hình Log bên cạnh
+            const logBox = document.getElementById('logManHinh');
+            logBox.innerHTML = `
+                <p class="text-info">----------------------------------------</p>
+                <p class="text-success">✔ ĐĂNG KÝ THÀNH CÔNG TRÊN WEB!</p>
+                <p><b>Hội viên:</b> ${hoTen}</p>
+                <p><b>SĐT:</b> ${sdt}</p>
+                <p><b>Email:</b> ${email}</p>
+                <p class="text-warning"><b>👉 Mã số thẻ cấp tự động: ${maTheNgauNhien}</b></p>
+            `;
+
+            // Xóa sạch các ô nhập sau khi bấm xong để nhập người tiếp theo
+            document.getElementById('formDangKy').reset();
+        });
+    </script>
+</body>
+</html>
