@@ -3,69 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý CLB Thể Thao - QR Code</title>
+    <title>Hệ Thống Quản Lý CLB Toàn Diện</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body class="bg-light">
 
-    <div class="container mt-4">
-        <h2 class="text-center text-primary mb-4">HỆ THỐNG QUẢN LÝ CLB THỂ THAO - QR CHECK-IN</h2>
+    <div class="container-fluid px-4 py-4">
+        <h2 class="text-center text-primary mb-4 fw-bold">HỆ THỐNG QUẢN LÝ CÂU LẠC BỘ THỂ THAO TOÀN DIỆN</h2>
         
         <div class="row">
-            <div class="col-md-6">
-                <div class="card shadow-sm p-4 mb-4">
-                    <h4 class="text-success mb-3">Đăng Ký Hội Viên Mới</h4>
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3 mb-3 border-success">
+                    <h5 class="text-success fw-bold mb-2">1. Đăng Ký Hội Viên Mới</h5>
                     <form id="formDangKy">
-                        <div class="mb-3"><label class="form-label">Họ và Tên</label><input type="text" id="hoTen" class="form-control" required></div>
-                        <div class="mb-3"><label class="form-label">Số Điện Thoại</label><input type="text" id="sdt" class="form-control" required></div>
-                        <div class="mb-3"><label class="form-label">Email</label><input type="email" id="email" class="form-control" required></div>
-                        <button type="submit" class="btn btn-success w-100">Đăng Ký & Cấp Mã Số Thẻ</button>
+                        <div class="mb-2"><input type="text" id="hoTen" class="form-control form-control-sm" placeholder="Họ và Tên" required></div>
+                        <div class="mb-2"><input type="text" id="sdt" class="form-control form-control-sm" placeholder="Số Điện Thoại" required></div>
+                        <div class="mb-2"><input type="email" id="email" class="form-control form-control-sm" placeholder="Email" required></div>
+                        <button type="submit" class="btn btn-success btn-sm w-100">Đăng Ký & Sinh Mã QR</button>
                     </form>
                 </div>
 
-                <div class="card shadow-sm p-4 mb-4">
-                    <h4 class="text-primary mb-3">Mua / Gia Hạn Gói Tập</h4>
+                <div class="card shadow-sm p-3 mb-3 border-primary">
+                    <h5 class="text-primary fw-bold mb-2">2. Mua / Gia Hạn Gói Tập</h5>
                     <form id="formGiaHan">
-                        <div class="mb-3"><label class="form-label">Mã Số Hội Viên</label><input type="text" id="maHoiVienGiaHan" class="form-control" required></div>
-                        <div class="mb-3">
-                            <label class="form-label">Chọn Gói Tập</label>
-                            <select id="maGoiTap" class="form-select">
+                        <div class="mb-2"><input type="text" id="maHoiVienGiaHan" class="form-control form-control-sm" placeholder="Mã Số Hội Viên (Ví dụ: HV20260001)" required></div>
+                        <div class="mb-2">
+                            <select id="maGoiTap" class="form-select form-select-sm">
                                 <option value="GYM01">Gói Gym Cơ Bản (1 tháng) - 500.000 VND</option>
                                 <option value="YOGA06">Gói Yoga Thượng Hạng (6 tháng) - 2.500.000 VND</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Thanh Toán & Kích Hoạt Thẻ</button>
+                        <button type="submit" class="btn btn-primary btn-sm w-100">Thanh Toán & Kích Hoạt</button>
                     </form>
                 </div>
 
-                <div class="card shadow-sm p-4 border-warning mb-4">
-                    <h4 class="text-warning mb-3">Cổng Điểm Danh Bằng QR Code</h4>
-                    
-                    <div id="reader" style="width: 100%; max-width: 400px; margin: 0 auto;" class="mb-3"></div>
-                    
-                    <form id="formCheckIn">
-                        <div class="mb-3">
-                            <label class="form-label">Mã Số Thẻ (Tự động điền khi quét QR)</label>
-                            <input type="text" id="maHoiVienCheckIn" class="form-control" placeholder="Quét QR hoặc nhập tay..." required>
+                <div class="card shadow-sm p-3 mb-3 border-info">
+                    <h5 class="text-info fw-bold mb-2">3. Theo Dõi Chỉ Số Sức Khỏe BMI</h5>
+                    <form id="formBMI">
+                        <div class="mb-2"><input type="text" id="maHoiVienBMI" class="form-control form-control-sm" placeholder="Mã Số Hội Viên" required></div>
+                        <div class="row g-2 mb-2">
+                            <div class="col"><input type="number" id="chieuCao" class="form-control form-control-sm" placeholder="Chiều cao (cm)" required></div>
+                            <div class="col"><input type="number" id="canNang" class="form-control form-control-sm" placeholder="Cân nặng (kg)" required></div>
                         </div>
-                        <button type="submit" class="btn btn-warning w-100 text-dark fw-bold">Xác Nhận Check-in</button>
+                        <button type="submit" class="btn btn-info btn-sm text-white w-100">Phân Tích Chỉ Số Sức Khỏe</button>
                     </form>
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div class="card shadow-sm p-4 mb-4 text-center bg-white border-primary">
-                    <h4 class="text-primary mb-3">Thẻ Hội Viên Điện Tử</h4>
-                    <div id="qrcode" class="d-flex justify-content-center my-3"></div>
-                    <p class="text-muted" id="qrGhiChu">Mã QR sẽ tự động sinh tại đây khi đăng ký thành công!</p>
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3 mb-3 border-warning">
+                    <h5 class="text-warning fw-bold mb-2">4. Cổng Điểm Danh Máy Quét QR</h5>
+                    <div id="reader" style="width: 100%; max-width: 280px; margin: 0 auto;" class="mb-2"></div>
+                    <form id="formCheckIn">
+                        <div class="mb-2"><input type="text" id="maHoiVienCheckIn" class="form-control form-control-sm" placeholder="Mã QR tự điền hoặc nhập tay..." required></div>
+                        <button type="submit" class="btn btn-warning btn-sm w-100 text-dark fw-bold">Xác Nhận Check-in</button>
+                    </form>
                 </div>
 
-                <div class="card shadow-sm p-4 bg-dark text-white" style="min-height: 300px;">
-                    <h4 class="text-warning mb-3">Màn Hình Log Hệ Thống</h4>
-                    <div id="logManHinh" style="font-family: monospace; font-size: 14px;">
-                        [Hệ thống] Sẵn sàng nhận dữ liệu...
+                <div class="card shadow-sm p-3 mb-3 border-secondary">
+                    <h5 class="text-secondary fw-bold mb-2">5. Trạng Thái Danh Mục Sân Bãi</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered text-center align-middle" style="font-size: 13px;">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Mã Sân</th>
+                                    <th>Tên Sân / Phòng</th>
+                                    <th>Loại Hình</th>
+                                    <th>Trạng Thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableSanBai">
+                                </tbody>
+                        </table>
+                    </div>
+                    <button onclick="taiDanhSachSanBai()" class="btn btn-outline-secondary btn-sm w-100">🔄 Cập Nhật Trạng Thái Sân</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm p-3 mb-3 text-center border-dark bg-white">
+                    <h6 class="text-dark fw-bold mb-1">Thẻ Hội Viên Điện Tử</h6>
+                    <div id="qrcode" class="d-flex justify-content-center my-2"></div>
+                    <p class="text-muted small mb-0" id="qrGhiChu">Mã QR sinh tự động tại đây</p>
+                </div>
+
+                <div class="card shadow-sm p-3 bg-dark text-white" style="min-height: 250px;">
+                    <h6 class="text-warning fw-bold mb-2">Màn Hình Hệ Thống Thực Thời</h6>
+                    <div id="logManHinh" style="font-family: monospace; font-size: 13px; max-height: 220px; overflow-y: auto;">
+                        [Hệ thống] Hệ thống quản lý đã sẵn sàng...
                     </div>
                 </div>
             </div>
@@ -73,28 +100,46 @@
     </div>
 
     <script>
-        // 1. LOGIC SINH MÃ QR (QRCode.js)
+        // Cấu hình sinh mã QR
         const qrcodeContainer = document.getElementById("qrcode");
-        const qrCode = new QRCode(qrcodeContainer, { width: 180, height: 180 });
+        const qrCode = new QRCode(qrcodeContainer, { width: 130, height: 130 });
 
         function capNhatMaQR(maHoiVien) {
             qrCode.clear(); 
-            qrCode.makeCode(maHoiVien); // Sinh mã QR chứa nội dung là mã hội viên
-            document.getElementById("qrGhiChu").innerHTML = `<b>Mã số thẻ của bạn: ${maHoiVien}</b><br>Hãy đưa mã này trước Camera để điểm danh!`;
+            qrCode.makeCode(maHoiVien);
+            document.getElementById("qrGhiChu").innerHTML = `<b>Mã số thẻ: ${maHoiVien}</b>`;
         }
 
-        // 2. LOGIC QUÉT MÃ QR QUA WEBCAM (Html5-QRCode)
-        function onScanSuccess(decodedText, decodedResult) {
-            // Khi quét trúng mã QR, tự động điền nội dung vào ô nhập và kích hoạt bấm nút luôn
+        // Cấu hình máy quét Webcam
+        function onScanSuccess(decodedText) {
             document.getElementById("maHoiVienCheckIn").value = decodedText;
             document.getElementById("formCheckIn").requestSubmit(); 
         }
-        
-        let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 180 });
         html5QrcodeScanner.render(onScanSuccess);
 
-        // --- CÁC HÀM XỬ LÝ API GIỮ NGUYÊN ---
-        // Form Đăng Ký
+        // HÀM TẢI ĐỘNG DANH SÁCH SÂN BÃI TỪ DATABASE THẬT (SCRUM-10)
+        async function taiDanhSachSanBai() {
+            const response = await fetch('/api/san-bai');
+            const data = await response.json();
+            let html = '';
+            data.forEach(san => {
+                const mauTrangThai = san.trang_thai === 'Trống' ? 'badge bg-success' : 'badge bg-danger';
+                html += `
+                    <tr>
+                        <td><b>${san.ma_san}</b></td>
+                        <td>${san.ten_san}</td>
+                        <td>${san.loai_san}</td>
+                        <td><span class="${mauTrangThai}">${san.trang_thai}</span></td>
+                    </tr>
+                `;
+            });
+            document.getElementById('tableSanBai').innerHTML = html;
+        }
+        // Gọi tải danh sách sân bãi ngay khi vừa load trang xong
+        taiDanhSachSanBai();
+
+        // Xử lý Form Đăng Ký
         document.getElementById('formDangKy').addEventListener('submit', async function(e) {
             e.preventDefault();
             const response = await fetch('/api/dang-ky', {
@@ -104,13 +149,13 @@
             });
             const result = await response.json();
             if (result.success) {
-                document.getElementById('logManHinh').innerHTML = `<p class="text-success">✔ ĐÃ LƯU DATABASE THẬT!<br><b>Mã số thẻ chính thức: ${result.maHoiVien}</b></p>`;
-                capNhatMaQR(result.maHoiVien); // Tự động tạo QR ngay khi đăng ký xong
+                document.getElementById('logManHinh').innerHTML = `<p class="text-success">✔ ĐÃ CẤP HỘI VIÊN MỚI!<br><b>Mã số: ${result.maHoiVien}</b></p>`;
+                capNhatMaQR(result.maHoiVien);
                 document.getElementById('formDangKy').reset();
             }
         });
 
-        // Form Gia Hạn
+        // Xử lý Form Mua Gói Tập
         document.getElementById('formGiaHan').addEventListener('submit', async function(e) {
             e.preventDefault();
             const response = await fetch('/api/gia-han', {
@@ -120,13 +165,13 @@
             });
             const result = await response.json();
             if (result.success) {
-                document.getElementById('logManHinh').innerHTML = `<p class="text-primary">✔ GIA HẠN THÀNH CÔNG!<br><b>Hạn thẻ:</b> ${result.ngayBatDau} đến ${result.ngayHetHan}</p>`;
-                capNhatMaQR(result.maHoiVien); // Tạo lại QR hiển thị cho hội viên
+                document.getElementById('logManHinh').innerHTML = `<p class="text-primary">✔ GIA HẠN THÀNH CÔNG!<br><b>Hạn dùng:</b> ${result.ngayBatDau} đến ${result.ngayHetHan}</p>`;
+                capNhatMaQR(result.maHoiVien);
                 document.getElementById('formGiaHan').reset();
             }
         });
 
-        // Form Điểm Danh
+        // Xử lý Form Điểm Danh Check-in
         document.getElementById('formCheckIn').addEventListener('submit', async function(e) {
             e.preventDefault();
             const response = await fetch('/api/check-in', {
@@ -137,10 +182,34 @@
             const result = await response.json();
             const logBox = document.getElementById('logManHinh');
             if (result.success) {
-                logBox.innerHTML = `<p class="text-warning font-weight-bold">🔔 CỔNG KIỂM SOÁT: ${result.message}</p><p><b>Mã số thẻ:</b> ${result.maHoiVien}</p><p><b>Thời gian:</b> ${result.thoiGian}</p>`;
+                logBox.innerHTML = `<p class="text-warning fw-bold">🔔 CỔNG KIỂM SOÁT: ${result.message}</p><p><b>Mã số:</b> ${result.maHoiVien}</p><p><b>Thời gian vào:</b> ${result.thoiGian}</p>`;
                 document.getElementById('formCheckIn').reset();
             } else {
-                logBox.innerHTML = `<p class="text-danger font-weight-bold">❌ TỪ CHỐI TRUY CẬP: ${result.message}</p>`;
+                logBox.innerHTML = `<p class="text-danger fw-bold">❌ TỪ CHỐI TRUY CẬP: ${result.message}</p>`;
+            }
+        });
+
+        // XỬ LÝ FORM PHÂN TÍCH CHỈ SỐ SỨC KHỎE BMI (SCRUM-9)
+        document.getElementById('formBMI').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const response = await fetch('/api/bmi', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    maHoiVien: document.getElementById('maHoiVienBMI').value,
+                    chieuCao: document.getElementById('chieuCao').value,
+                    canNang: document.getElementById('canNang').value
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                document.getElementById('logManHinh').innerHTML = `
+                    <p class="text-info">----------------------------------------</p>
+                    <p class="text-info fw-bold">📊 KẾT QUẢ PHÂN TÍCH BMI (Hội viên: ${result.maHoiVien})</p>
+                    <p><b>Chỉ số BMI tính được:</b> <span class="badge bg-dark">${result.bmi}</span></p>
+                    <p><b>Tình trạng thể chất:</b> <span class="badge bg-danger">${result.nhanXet}</span></p>
+                `;
+                document.getElementById('formBMI').reset();
             }
         });
     </script>

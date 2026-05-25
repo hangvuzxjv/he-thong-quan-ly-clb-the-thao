@@ -90,6 +90,42 @@ app.post('/api/check-in', (req, res) => {
         stmt.finalize();
     });
 });
+// ==================== API CHO SCRUM-9: THEO DÕI SỨC KHỎE BMI ====================
+app.post('/api/bmi', (req, res) => {
+    const { maHoiVien, chieuCao, canNang } = req.body;
+    const ngayDoStr = new Date().toISOString().split('T')[0];
+
+    // Tính toán chỉ số BMI = cân nặng (kg) / (chiều cao (m) ^ 2)
+    const chieuCaoMet = chieuCao / 100;
+    const chiSoBMI = (canNang / (chieuCaoMet * chieuCaoMet)).toFixed(1);
+
+    // Đưa ra nhận xét dựa trên chỉ số BMI chuẩn khoa học
+    let nhanXet = "Bình thường";
+    if (chiSoBMI < 18.5) nhanXet = "Gầy";
+    else if (chiSoBMI >= 25 && chiSoBMI < 29.9) nhanXet = "Thừa cân";
+    else if (chiSoBMI >= 30) nhanXet = "Béo phì";
+
+    const stmt = db.prepare(`INSERT INTO SucKhoeBMI (ma_hoi_vien, chieu_cao, can_nang, chi_so_bmi, nhan_xet, ngay_do) VALUES (?, ?, ?, ?, ?, ?)`);
+    stmt.run(maHoiVien, chieuCao, canNang, chiSoBMI, nhanXet, ngayDoStr, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({
+            success: true,
+            maHoiVien: maHoiVien,
+            bmi: chiSoBMI,
+            nhanXet: nhanXet
+        });
+    });
+    stmt.finalize();
+});
+
+// ==================== API CHO SCRUM-10: QUẢN LÝ DANH MỤC SÂN BÃI ====================
+// Lấy danh sách toàn bộ sân bãi hiện có để hiển thị lên web
+app.get('/api/san-bai', (req, res) => {
+    db.all(`SELECT * FROM SanBai`, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
 
 app.listen(8080, () => {
  console.log('=== SERVER QUẢN LÝ CLB ĐANG CHẠY TẠI CỔNG 8080 ===');
