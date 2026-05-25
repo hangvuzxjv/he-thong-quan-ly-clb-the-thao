@@ -42,6 +42,23 @@
                 </div>
             </div>
         </div>
+        <div class="card shadow-sm p-4 mt-4">
+                    <h4 class="text-primary mb-3">Mua / Gia Hạn Gói Tập</h4>
+                    <form id="formGiaHan">
+                        <div class="mb-3">
+                            <label class="form-label">Mã Số Hội Viên</label>
+                            <input type="text" id="maHoiVienGiaHan" class="form-control" placeholder="Ví dụ: HV20260005" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Chọn Gói Tập</label>
+                            <select id="maGoiTap" class="form-select">
+                                <option value="GYM01">Gói Gym Cơ Bản (1 tháng) - 500.000 VND</option>
+                                <option value="YOGA06">Gói Yoga Thượng Hạng (6 tháng) - 2.500.000 VND</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Thanh Toán & Kích Hoạt Thẻ</button>
+                    </form>
+                </div>
     </div>
 
     <script>
@@ -75,6 +92,35 @@
         logBox.innerHTML = `<p class="text-danger">❌ Lỗi hệ thống: ${result.error}</p>`;
     }
 });
+    // XỬ LÝ SỰ KIỆN BẤM NÚT GIA HẠN / MUA GÓI TẬP
+        document.getElementById('formGiaHan').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const maHoiVien = document.getElementById('maHoiVienGiaHan').value;
+            const maGoiTap = document.getElementById('maGoiTap').value;
+
+            const response = await fetch('/api/gia-han', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ maHoiVien, maGoiTap })
+            });
+
+            const result = await response.json();
+            const logBox = document.getElementById('logManHinh');
+
+            if (result.success) {
+                logBox.innerHTML = `
+                    <p class="text-info">----------------------------------------</p>
+                    <p class="text-primary">✔ THANH TOÁN & GIA HẠN THÀNH CÔNG!</p>
+                    <p><b>Mã hội viên:</b> ${result.maHoiVien}</p>
+                    <p><b>Gói đăng ký:</b> ${result.tenGoiTap}</p>
+                    <p class="text-success"><b>Hạn thẻ:</b> Từ ${result.ngayBatDau} đến ${result.ngayHetHan}</p>
+                `;
+                document.getElementById('formGiaHan').reset();
+            } else {
+                logBox.innerHTML = `<p class="text-danger">❌ Lỗi: ${result.error}</p>`;
+            }
+        });
     </script>
 </body>
 </html>
