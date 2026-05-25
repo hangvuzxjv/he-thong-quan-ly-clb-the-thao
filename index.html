@@ -45,31 +45,36 @@
     </div>
 
     <script>
-        document.getElementById('formDangKy').addEventListener('submit', function(e) {
-            e.preventDefault(); // Chặn trang web bị tải lại
-            
-            const hoTen = document.getElementById('hoTen').value;
-            const sdt = document.getElementById('sdt').value;
-            const email = document.getElementById('email').value;
+        document.getElementById('formDangKy').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Chặn trang web bị tải lại
+    
+    const hoTen = document.getElementById('hoTen').value;
+    const soDienThoai = document.getElementById('sdt').value;
+    const email = document.getElementById('email').value;
 
-            // Mô phỏng gửi dữ liệu lên Backend và nhận về mã thẻ tự tăng
-            const namHienTai = new Date().getFullYear();
-            const maTheNgauNhien = 'HV' + namHienTai + Math.floor(1000 + Math.random() * 9000);
+    // GỬI DỮ LIỆU THẬT LÊN SERVER BACKEND QUA API
+    const response = await fetch('/api/dang-ky', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hoTen, soDienThoai, email })
+    });
 
-            // In kết quả trực quan lên màn hình Log bên cạnh
-            const logBox = document.getElementById('logManHinh');
-            logBox.innerHTML = `
-                <p class="text-info">----------------------------------------</p>
-                <p class="text-success">✔ ĐĂNG KÝ THÀNH CÔNG TRÊN WEB!</p>
-                <p><b>Hội viên:</b> ${hoTen}</p>
-                <p><b>SĐT:</b> ${sdt}</p>
-                <p><b>Email:</b> ${email}</p>
-                <p class="text-warning"><b>👉 Mã số thẻ cấp tự động: ${maTheNgauNhien}</b></p>
-            `;
+    const result = await response.json();
 
-            // Xóa sạch các ô nhập sau khi bấm xong để nhập người tiếp theo
-            document.getElementById('formDangKy').reset();
-        });
+    // HIỂN THỊ KẾT QUẢ TRẢ VỀ TỪ DATABASE THẬT
+    const logBox = document.getElementById('logManHinh');
+    if (result.success) {
+        logBox.innerHTML = `
+            <p class="text-info">----------------------------------------</p>
+            <p class="text-success">✔ ĐÃ LƯU VÀO DATABASE THẬT!</p>
+            <p><b>Hội viên:</b> ${result.hoTen}</p>
+            <p class="text-warning"><b>👉 Mã số thẻ chính thức: ${result.maHoiVien}</b></p>
+        `;
+        document.getElementById('formDangKy').reset(); // Xóa sạch ô nhập
+    } else {
+        logBox.innerHTML = `<p class="text-danger">❌ Lỗi hệ thống: ${result.error}</p>`;
+    }
+});
     </script>
 </body>
 </html>
