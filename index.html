@@ -58,6 +58,17 @@
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Thanh Toán & Kích Hoạt Thẻ</button>
                     </form>
+          
+              </div>
+              <div class="card shadow-sm p-4 mt-4 border-warning">
+                    <h4 class="text-warning mb-3">Cổng Điểm Danh (Check-in)</h4>
+                    <form id="formCheckIn">
+                        <div class="mb-3">
+                            <label class="form-label">Nhập hoặc Quét Mã Thẻ Hội Viên</label>
+                            <input type="text" id="maHoiVienCheckIn" class="form-control" placeholder="Ví dụ: HV20260007" required>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 text-dark fw-bold">Xác Nhận Check-in</button>
+                    </form>
                 </div>
     </div>
 
@@ -119,6 +130,37 @@
                 document.getElementById('formGiaHan').reset();
             } else {
                 logBox.innerHTML = `<p class="text-danger">❌ Lỗi: ${result.error}</p>`;
+            }
+        });
+        // XỬ LÝ SỰ KIỆN BẤM NÚT CHECK-IN ĐIỂM DANH
+        document.getElementById('formCheckIn').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const maHoiVien = document.getElementById('maHoiVienCheckIn').value;
+
+            const response = await fetch('/api/check-in', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ maHoiVien })
+            });
+
+            const result = await response.json();
+            const logBox = document.getElementById('logManHinh');
+
+            if (result.success) {
+                logBox.innerHTML = `
+                    <p class="text-info">----------------------------------------</p>
+                    <p class="text-warning font-weight-bold">🔔 CỔNG KIỂM SOÁT: ${result.message}</p>
+                    <p><b>Mã số thẻ:</b> ${result.maHoiVien}</p>
+                    <p><b>Thời gian vào:</b> ${result.thoiGian}</p>
+                    <p class="text-success"><b>Hạn gói tập còn đến:</b> ${result.ngayHetHan}</p>
+                `;
+                document.getElementById('formCheckIn').reset();
+            } else {
+                logBox.innerHTML = `
+                    <p class="text-info">----------------------------------------</p>
+                    <p class="text-danger">❌ TỪ CHỐI TRUY CẬP: ${result.message}</p>
+                `;
             }
         });
     </script>

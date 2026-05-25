@@ -7,12 +7,12 @@ const db = new sqlite3.Database('./qlclbtt.db');
 
 app.use(express.json());
 
-// Hiển thị giao diện Web index.html khi truy cập
+// Giao diện Web chính
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// API nhận dữ liệu từ Web và lưu vào Database thật
+// API 1: Đăng ký hội viên mới (SCRUM-5)
 app.post('/api/dang-ky', (req, res) => {
     const { hoTen, soDienThoai, email } = req.body;
     const namHienTai = new Date().getFullYear();
@@ -27,23 +27,18 @@ app.post('/api/dang-ky', (req, res) => {
         const stmt = db.prepare(`INSERT INTO HoiVien VALUES (?, ?, ?, ?, ?, ?)`);
         stmt.run(maHoiVienMoi, hoTen, soDienThoai, email, ngayHomNay, 'Hoat dong', (insertErr) => {
             if (insertErr) return res.status(500).json({ error: insertErr.message });
-            
-            res.json({
-                success: true,
-                maHoiVien: maHoiVienMoi,
-                hoTen: hoTen
-            });
+            res.json({ success: true, maHoiVien: maHoiVienMoi, hoTen: hoTen });
         });
         stmt.finalize();
     });
 });
-// API: Xử lý thanh toán và gia hạn thẻ từ giao diện Web (SCRUM-7)
+
+// API 2: Thanh toán & Mua gói tập (SCRUM-7)
 app.post('/api/gia-han', (req, res) => {
     const { maHoiVien, maGoiTap } = req.body;
 
-    // 1. Kiểm tra mã gói tập để lấy số tháng
     db.get(`SELECT * FROM GoiTap WHERE ma_goi_tap = ?`, [maGoiTap], (err, goiTap) => {
-        if (err || !goiTap) return res.status(404).json({ error: "Không tìm thấy gói tập này!" });
+        if (err || !goiTap) return res.status(404).json({ error: "Không tìm thấy gói tập!" });
 
         const ngayBatDau = new Date();
         const ngayHetHan = new Date();
@@ -52,12 +47,9 @@ app.post('/api/gia-han', (req, res) => {
         const ngayBatDauStr = ngayBatDau.toISOString().split('T')[0];
         const ngayHetHanStr = ngayHetHan.toISOString().split('T')[0];
 
-        // 2. Lưu hoặc cập nhật vào bảng TheHoiVien thật
         const stmt = db.prepare(`INSERT OR REPLACE INTO TheHoiVien VALUES (?, ?, ?, ?)`);
         stmt.run(maHoiVien, maGoiTap, ngayBatDauStr, ngayHetHanStr, (insertErr) => {
             if (insertErr) return res.status(500).json({ error: insertErr.message });
-
-            // Trả kết quả về cho Giao diện hiển thị
             res.json({
                 success: true,
                 maHoiVien: maHoiVien,
@@ -70,6 +62,35 @@ app.post('/api/gia-han', (req, res) => {
     });
 });
 
+// API 3: Cổng điểm danh Check-in (SCRUM-8)
+app.post('/api/check-in', (req, res) => {
+    const { maHoiVien } = req.body;
+    const ngayHomNayStr = new Date().toISOString().split('T')[0];
+    const thoiGianHienTai = new Date().toLocaleString('vi-VN');
+
+    db.get(`SELECT * FROM TheHoiVien WHERE ma_hoi_vien = ?`, [maHoiVien], (err, the) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!the) return res.json({ success: false, message: "Thẻ chưa kích hoạt gói tập hoặc không tồn tại!" });
+
+        if (the.ngay_het_han < ngayHomNayStr) {
+            return res.json({ success: false, message: `Thẻ đã hết hạn vào ngày ${the.ngay_het_han}!` });
+        }
+
+        const stmt = db.prepare(`INSERT INTO DiemDanh (ma_hoi_vien, thoi_gian, trang_thai) VALUES (?, ?, ?)`);
+        stmt.run(maHoiVien, thoiGianHienTai, 'Thành công', (insertErr) => {
+            if (insertErr) return res.status(500).json({ error: insertErr.message });
+            res.json({
+                success: true,
+                message: "HỢP LỆ! MỜI VÀO PHÒNG TẬP.",
+                maHoiVien: maHoiVien,
+                thoiGian: thoiGianHienTai,
+                ngayHetHan: the.ngay_het_han
+            });
+        });
+        stmt.finalize();
+    });
+});
+
 app.listen(8080, () => {
-    console.log('=== SERVER QUẢN LÝ CLB ĐANG CHẠY TẠI CỔNG 8080 ===');
+ console.log('=== SERVER QUẢN LÝ CLB ĐANG CHẠY TẠI CỔNG 8080 ===');
 });
