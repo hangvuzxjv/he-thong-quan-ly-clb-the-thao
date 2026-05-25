@@ -44,20 +44,50 @@ function xemDanhSachGoiTap() {
     });
 }
 
-// CHẠY THỬ NGHIỆM TỔNG HỢP SPRINT 1
-db.serialize(() => {
-    // 1. Test chức năng SCRUM-6 (Thêm gói tập)
-    themGoiTap("GYM01", "Gói Gym Cơ Bản", 500000, 1);
-    themGoiTap("YOGA06", "Gói Yoga Thượng Hạng", 2500000, 6);
-    
-    // 2. Xem danh sách gói tập
-    setTimeout(() => {
-        xemDanhSachGoiTap();
-    }, 200);
 
-    // 3. Test chức năng SCRUM-5 (Đăng ký hội viên)
+
+// Tạo thêm bảng Thẻ Hội Viên để quản lý ngày hết hạn nếu chưa có
+db.run(`CREATE TABLE IF NOT EXISTS TheHoiVien (
+    ma_hoi_vien TEXT PRIMARY KEY,
+    ma_goi_tap TEXT,
+    ngay_bat_dau TEXT,
+    ngay_het_han TEXT,
+    FOREIGN KEY(ma_hoi_vien) REFERENCES HoiVien(ma_hoi_vien),
+    FOREIGN KEY(ma_goi_tap) REFERENCES GoiTap(ma_goi_tap)
+)`);
+
+// HÀM LOGIC: Xử lý thanh toán và gia hạn thẻ (SCRUM-7)
+function thanhToanVaGiaHan(maHoiVien, maGoiTap) {
+    // 1. Lấy thông tin số tháng của gói tập từ DB
+    db.get(`SELECT * FROM GoiTap WHERE ma_goi_tap = ?`, [maGoiTap], (err, goiTap) => {
+        if (err || !goiTap) return console.error("Không tìm thấy gói tập!");
+
+        const ngayBatDau = new Date();
+        const ngayHetHan = new Date();
+        // Cộng thêm số tháng của gói tập vào ngày hết hạn
+        ngayHetHan.setMonth(ngayBatDau.getMonth() + goiTap.thoi_han_thang);
+
+        const ngayBatDauStr = ngayBatDau.toISOString().split('T')[0];
+        const ngayHetHanStr = ngayHetHan.toISOString().split('T')[0];
+
+        // 2. Lưu thông tin gia hạn vào bảng TheHoiVien
+        const stmt = db.prepare(`INSERT OR REPLACE INTO TheHoiVien VALUES (?, ?, ?, ?)`);
+        stmt.run(maHoiVien, maGoiTap, ngayBatDauStr, ngayHetHanStr);
+        stmt.finalize();
+
+        console.log(`=== THANH TOÁN & GIA HẠN THÀNH CÔNG ===`);
+        console.log(`Hội viên: ${maHoiVien} | Đã mua: ${goiTap.ten_goi_tap}`);
+        console.log(`Thời hạn thẻ: Từ ${ngayBatDauStr} đến ${ngayHetHanStr}\n`);
+    });
+}
+
+// CHẠY THỬ NGHIỆM TỔNG HỢP TOÀN BỘ SPRINT 1 (SCRUM-5, 6, 7)
+db.serialize(() => {
+    console.log(`--- HỆ THỐNG QUẢN LÝ CLB THỂ THAO ĐANG CHẠY ---`);
+
+    // Chạy thử tính năng thanh toán sau khi các dữ liệu trên đã sẵn sàng
     setTimeout(() => {
-        console.log(`\n=== KẾT QUẢ ĐĂNG KÝ HỘI VIÊN ===`);
-        dangKyHoiVien("Lê Văn C", "0933333333", "vanc@gmail.com");
-    }, 400);
+        // Giả sử hội viên mã số HV20260004 đăng ký mua gói YOGA06
+        thanhToanVaGiaHan("HV20260004", "YOGA06");
+    }, 600);
 });
