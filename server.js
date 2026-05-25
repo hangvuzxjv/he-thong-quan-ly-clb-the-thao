@@ -23,12 +23,41 @@ function dangKyHoiVien(hoTen, soDienThoai, email) {
     });
 }
 
-// GỌI CHẠY THỬ (Sử dụng db.serialize để chạy tuần tự, tránh trùng mã)
+
+
+// HÀM LOGIC: Thêm gói tập mới (SCRUM-6)
+function themGoiTap(maGoi, tenGoi, giaTien, thoiHan) {
+    const stmt = db.prepare(`INSERT INTO GoiTap VALUES (?, ?, ?, ?)`);
+    stmt.run(maGoi, tenGoi, giaTien, thoiHan, (err) => {
+        if (err) return console.error(`Lỗi thêm gói tập: ${err.message}`);
+        console.log(`[GÓI TẬP] Thêm thành công: ${tenGoi} (${giaTien} VND)`);
+    });
+    stmt.finalize();
+}
+
+// HÀM LOGIC: Xem danh sách gói tập đang có
+function xemDanhSachGoiTap() {
+    console.log(`\n=== DANH SÁCH GÓI TẬP HIỆN CÓ ===`);
+    db.each(`SELECT * FROM GoiTap`, [], (err, row) => {
+        if (err) return console.error(err.message);
+        console.log(`Mã: ${row.ma_goi_tap} | Tên: ${row.ten_goi_tap} | Giá: ${row.gia_tien} VND | Thời hạn: ${row.thoi_han_thang} tháng`);
+    });
+}
+
+// CHẠY THỬ NGHIỆM TỔNG HỢP SPRINT 1
 db.serialize(() => {
-    dangKyHoiVien("Nguyen Van A", "0912345678", "vana@gmail.com");
+    // 1. Test chức năng SCRUM-6 (Thêm gói tập)
+    themGoiTap("GYM01", "Gói Gym Cơ Bản", 500000, 1);
+    themGoiTap("YOGA06", "Gói Yoga Thượng Hạng", 2500000, 6);
     
-    // Đợi 500ms sau mới tạo người thứ 2 để database kịp cập nhật số lượng
+    // 2. Xem danh sách gói tập
     setTimeout(() => {
-        dangKyHoiVien("Tran Thi B", "0987654321", "thib@gmail.com");
-    }, 500);
+        xemDanhSachGoiTap();
+    }, 200);
+
+    // 3. Test chức năng SCRUM-5 (Đăng ký hội viên)
+    setTimeout(() => {
+        console.log(`\n=== KẾT QUẢ ĐĂNG KÝ HỘI VIÊN ===`);
+        dangKyHoiVien("Lê Văn C", "0933333333", "vanc@gmail.com");
+    }, 400);
 });
