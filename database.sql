@@ -1,24 +1,51 @@
--- 5. BẢNG THEO DÕI SỨC KHỎE BMI (SCRUM-9)
-CREATE TABLE IF NOT EXISTS SucKhoeBMI (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    ma_hoi_vien TEXT NOT NULL,
-    chieu_cao REAL NOT NULL, -- đơn vị: cm
-    can_nang REAL NOT NULL,  -- đơn vị: kg
-    chi_so_bmi REAL NOT NULL,
-    nhan_xet TEXT,
-    ngay_do TEXT NOT NULL,
-    FOREIGN KEY(ma_hoi_vien) REFERENCES HoiVien(ma_hoi_vien)
+CREATE TABLE IF NOT EXISTS HoiVien (
+    ma_hv TEXT PRIMARY KEY, 
+    ho_ten TEXT NOT NULL, 
+    sdt TEXT NOT NULL, 
+    email TEXT NOT NULL, 
+    ngay_dang_ky TEXT NOT NULL, 
+    loai_the TEXT DEFAULT 'Chưa kích hoạt', 
+    diem_thuong INTEGER DEFAULT 0
 );
 
--- 6. BẢNG QUẢN LÝ SÂN BÃI DỊCH VỤ (SCRUM-10)
-CREATE TABLE IF NOT EXISTS SanBai (
-    ma_san TEXT PRIMARY KEY,
-    ten_san TEXT NOT NULL,
-    loai_san TEXT NOT NULL, -- Ví dụ: Sân Bóng Đá, Sân Cầu Lông, Sân Tennis
-    trang_thai TEXT DEFAULT 'Trống' -- Trống / Đang sử dụng
+CREATE TABLE IF NOT EXISTS GiaoDich (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    ma_hv TEXT NOT NULL, 
+    ten_goi TEXT NOT NULL, 
+    so_tien REAL NOT NULL, 
+    phuong_thuc TEXT NOT NULL, 
+    ngay_giao_dich TEXT NOT NULL, 
+    ngay_het_han TEXT NOT NULL, 
+    nguoi_thu_tien TEXT, 
+    FOREIGN KEY(ma_hv) REFERENCES HoiVien(ma_hv)
 );
 
--- CHÈN SẴN MỘT SỐ SÂN BÃI ĐỂ LÀM DỮ LIỆU CẤU HÌNH BAN ĐẦU
-INSERT OR IGNORE INTO SanBai VALUES ('SB01', 'Sân Bóng Đá Thượng Hạng A', 'Sân Bóng Đá', 'Trống');
-INSERT OR IGNORE INTO SanBai VALUES ('CL01', 'Sân Cầu Lông Tiêu Chuẩn 1', 'Sân Cầu Lông', 'Trống');
-INSERT OR IGNORE INTO SanBai VALUES ('TN01', 'Sân Tennis Đỉnh Cao', 'Sân Tennis', 'Đang sử dụng');
+CREATE TABLE IF NOT EXISTS VeLeKhachVangLai (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    loai_ve TEXT NOT NULL, 
+    so_tien REAL NOT NULL, 
+    ngay_ban TEXT NOT NULL, 
+    nguoi_thu_tien TEXT
+);
+
+CREATE TABLE IF NOT EXISTS CheckInLog (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
+    ma_hv TEXT NOT NULL, 
+    khu_vuc TEXT NOT NULL, 
+    thoi_gian TEXT NOT NULL, 
+    trang_thai TEXT DEFAULT 'Thành công', 
+    FOREIGN KEY(ma_hv) REFERENCES HoiVien(ma_hv)
+);
+
+CREATE TABLE IF NOT EXISTS NhanSu (
+    ma_nv TEXT PRIMARY KEY, 
+    ho_ten TEXT NOT NULL, 
+    vai_tro TEXT NOT NULL, 
+    username TEXT UNIQUE NOT NULL, 
+    password TEXT NOT NULL
+);
+
+-- Khởi tạo 3 tài khoản nhân sự ban đầu
+INSERT OR IGNORE INTO NhanSu VALUES ('NV01', 'Admin Tổng', 'Quản trị viên', 'admin', '123456');
+INSERT OR IGNORE INTO NhanSu VALUES ('NV02', 'Lễ Tân Nữ', 'Lễ tân trực quầy', 'letan_nu', '123456');
+INSERT OR IGNORE INTO NhanSu VALUES ('NV03', 'Lễ Tân Nam', 'Lễ tân trực quầy', 'letan_nam', '123456');

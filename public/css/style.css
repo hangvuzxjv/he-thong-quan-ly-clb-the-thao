@@ -1,0 +1,52 @@
+/* --- CÁC STYLE CŨ --- */
+.sidebar { width: 260px; background: #0f172a; min-height: 100vh; }
+
+.nav-link-custom { 
+    display: flex; 
+    align-items: center; 
+    color: #94a3b8; 
+    padding: 12px 20px; 
+    text-decoration: none; 
+    border-radius: 8px; 
+    margin-bottom: 5px; 
+    transition: 0.3s; 
+}
+.nav-link-custom i { 
+    width: 26px; 
+    text-align: center; 
+}
+.nav-link-custom.active, .nav-link-custom:hover { 
+    background: #3b82f6; 
+    color: white; 
+}
+
+.stat-card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.glass-card { backdrop-filter: blur(10px); }
+
+/* --- STYLE AVATAR & DROPDOWN MỚI --- */
+.avatar {
+    background: linear-gradient(135deg, #4f46e5, #9333ea) !important; 
+    color: white !important;
+    font-weight: bold;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(79, 70, 229, 0.5);
+}
+
+.dropdown-menu { 
+    border-radius: 12px; 
+    border: 1px solid rgba(0,0,0,0.05); 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+    padding: 10px 0;
+}
+.dropdown-item { transition: 0.2s; padding: 10px 20px; }
+.dropdown-item:hover { background-color: #f8fafc; color: #dc3545 !important; }
+
+/* Input đăng nhập glassmorphism */
+#loginUsername::placeholder, #loginPassword::placeholder { color: rgba(255, 255, 255, 0.5); }

@@ -1,132 +1,19 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const apiRoutes = require('./routes/api.routes'); // Nhúng module API
 
 const app = express();
-const db = new sqlite3.Database('./qlclbtt.db');
+const PORT = 8080;
 
+// Cấu hình Middleware
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Giao diện Web chính
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+// Gắn bộ định tuyến API
+app.use('/api', apiRoutes);
 
-// API 1: Đăng ký hội viên mới (SCRUM-5)
-app.post('/api/dang-ky', (req, res) => {
-    const { hoTen, soDienThoai, email } = req.body;
-    const namHienTai = new Date().getFullYear();
-    const ngayHomNay = new Date().toISOString().split('T')[0];
-
-    db.get(`SELECT COUNT(*) AS count FROM HoiVien`, [], (err, row) => {
-        if (err) return res.status(500).json({ error: err.message });
-
-        const soThuTu = String(row.count + 1).padStart(4, '0');
-        const maHoiVienMoi = `HV${namHienTai}${soThuTu}`;
-
-        const stmt = db.prepare(`INSERT INTO HoiVien VALUES (?, ?, ?, ?, ?, ?)`);
-        stmt.run(maHoiVienMoi, hoTen, soDienThoai, email, ngayHomNay, 'Hoat dong', (insertErr) => {
-            if (insertErr) return res.status(500).json({ error: insertErr.message });
-            res.json({ success: true, maHoiVien: maHoiVienMoi, hoTen: hoTen });
-        });
-        stmt.finalize();
-    });
-});
-
-// API 2: Thanh toán & Mua gói tập (SCRUM-7)
-app.post('/api/gia-han', (req, res) => {
-    const { maHoiVien, maGoiTap } = req.body;
-
-    db.get(`SELECT * FROM GoiTap WHERE ma_goi_tap = ?`, [maGoiTap], (err, goiTap) => {
-        if (err || !goiTap) return res.status(404).json({ error: "Không tìm thấy gói tập!" });
-
-        const ngayBatDau = new Date();
-        const ngayHetHan = new Date();
-        ngayHetHan.setMonth(ngayBatDau.getMonth() + goiTap.thoi_han_thang);
-
-        const ngayBatDauStr = ngayBatDau.toISOString().split('T')[0];
-        const ngayHetHanStr = ngayHetHan.toISOString().split('T')[0];
-
-        const stmt = db.prepare(`INSERT OR REPLACE INTO TheHoiVien VALUES (?, ?, ?, ?)`);
-        stmt.run(maHoiVien, maGoiTap, ngayBatDauStr, ngayHetHanStr, (insertErr) => {
-            if (insertErr) return res.status(500).json({ error: insertErr.message });
-            res.json({
-                success: true,
-                maHoiVien: maHoiVien,
-                tenGoiTap: goiTap.ten_goi_tap,
-                ngayBatDau: ngayBatDauStr,
-                ngayHetHan: ngayHetHanStr
-            });
-        });
-        stmt.finalize();
-    });
-});
-
-// API 3: Cổng điểm danh Check-in (SCRUM-8)
-app.post('/api/check-in', (req, res) => {
-    const { maHoiVien } = req.body;
-    const ngayHomNayStr = new Date().toISOString().split('T')[0];
-    const thoiGianHienTai = new Date().toLocaleString('vi-VN');
-
-    db.get(`SELECT * FROM TheHoiVien WHERE ma_hoi_vien = ?`, [maHoiVien], (err, the) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (!the) return res.json({ success: false, message: "Thẻ chưa kích hoạt gói tập hoặc không tồn tại!" });
-
-        if (the.ngay_het_han < ngayHomNayStr) {
-            return res.json({ success: false, message: `Thẻ đã hết hạn vào ngày ${the.ngay_het_han}!` });
-        }
-
-        const stmt = db.prepare(`INSERT INTO DiemDanh (ma_hoi_vien, thoi_gian, trang_thai) VALUES (?, ?, ?)`);
-        stmt.run(maHoiVien, thoiGianHienTai, 'Thành công', (insertErr) => {
-            if (insertErr) return res.status(500).json({ error: insertErr.message });
-            res.json({
-                success: true,
-                message: "HỢP LỆ! MỜI VÀO PHÒNG TẬP.",
-                maHoiVien: maHoiVien,
-                thoiGian: thoiGianHienTai,
-                ngayHetHan: the.ngay_het_han
-            });
-        });
-        stmt.finalize();
-    });
-});
-// ==================== API CHO SCRUM-9: THEO DÕI SỨC KHỎE BMI ====================
-app.post('/api/bmi', (req, res) => {
-    const { maHoiVien, chieuCao, canNang } = req.body;
-    const ngayDoStr = new Date().toISOString().split('T')[0];
-
-    // Tính toán chỉ số BMI = cân nặng (kg) / (chiều cao (m) ^ 2)
-    const chieuCaoMet = chieuCao / 100;
-    const chiSoBMI = (canNang / (chieuCaoMet * chieuCaoMet)).toFixed(1);
-
-    // Đưa ra nhận xét dựa trên chỉ số BMI chuẩn khoa học
-    let nhanXet = "Bình thường";
-    if (chiSoBMI < 18.5) nhanXet = "Gầy";
-    else if (chiSoBMI >= 25 && chiSoBMI < 29.9) nhanXet = "Thừa cân";
-    else if (chiSoBMI >= 30) nhanXet = "Béo phì";
-
-    const stmt = db.prepare(`INSERT INTO SucKhoeBMI (ma_hoi_vien, chieu_cao, can_nang, chi_so_bmi, nhan_xet, ngay_do) VALUES (?, ?, ?, ?, ?, ?)`);
-    stmt.run(maHoiVien, chieuCao, canNang, chiSoBMI, nhanXet, ngayDoStr, (err) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({
-            success: true,
-            maHoiVien: maHoiVien,
-            bmi: chiSoBMI,
-            nhanXet: nhanXet
-        });
-    });
-    stmt.finalize();
-});
-
-// ==================== API CHO SCRUM-10: QUẢN LÝ DANH MỤC SÂN BÃI ====================
-// Lấy danh sách toàn bộ sân bãi hiện có để hiển thị lên web
-app.get('/api/san-bai', (req, res) => {
-    db.all(`SELECT * FROM SanBai`, [], (err, rows) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(rows);
-    });
-});
-
-app.listen(8080, () => {
- console.log('=== SERVER QUẢN LÝ CLB ĐANG CHẠY TẠI CỔNG 8080 ===');
+// Khởi động hệ thống
+app.listen(PORT, () => {
+    console.log(` [TITAN FITNESS] Server Core đang chạy ổn định tại cổng ${PORT}`);
+    console.log(` Truy cập giao diện: http://localhost:${PORT}`);
 });
