@@ -50,3 +50,42 @@
 
 /* Input đăng nhập glassmorphism */
 #loginUsername::placeholder, #loginPassword::placeholder { color: rgba(255, 255, 255, 0.5); }
+
+/* --- STYLE MỚI CHO CÁC MODULE: DANH BẠ, HUB, SHOP --- */
+
+/* Style cho các card sản phẩm trong Shop */
+.shop-product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+.shop-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Style cho các bảng dữ liệu mới */
+.table-container {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+/* Style cho các nút action nhỏ trong Hub Hội Viên */
+.action-btn-hub {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+
+/* Thêm animation cho các trang khi load */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

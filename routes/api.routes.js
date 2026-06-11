@@ -147,12 +147,34 @@ router.get('/dashboard/filter', (req, res) => {
     });
 });
 
+// ================= CẬP NHẬT: PHÂN TRANG DANH SÁCH HỘI VIÊN =================
+// --- 1. Danh sách hội viên (Phân trang chuẩn) ---
 router.get('/members/list', (req, res) => {
-    db.all(`SELECT * FROM HoiVien ORDER BY ngay_dang_ky DESC`, [], (err, rows) => {
-        res.json(rows);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    db.serialize(() => {
+        // Lấy danh sách hội viên theo trang
+        db.all(`SELECT * FROM HoiVien ORDER BY ngay_dang_ky DESC LIMIT ? OFFSET ?`, [limit, offset], (err, rows) => {
+            if (err) return res.status(500).json({ error: err.message });
+            
+            // Lấy tổng số lượng để tính totalPages
+            db.get(`SELECT COUNT(*) as total FROM HoiVien`, (err, countRow) => {
+                if (err) return res.status(500).json({ error: err.message });
+                
+                res.json({ 
+                    members: rows, 
+                    total: countRow.total,
+                    totalPages: Math.ceil(countRow.total / limit),
+                    currentPage: page
+                });
+            });
+        });
     });
 });
 
+// --- 2. Chi tiết hội viên ---
 router.get('/members/detail/:id', (req, res) => {
     const maHv = req.params.id;
     db.get(`SELECT * FROM HoiVien WHERE ma_hv = ?`, [maHv], (err, user) => {
@@ -163,27 +185,47 @@ router.get('/members/detail/:id', (req, res) => {
     });
 });
 
+// --- 3. Hủy thẻ ---
 router.post('/members/cancel', (req, res) => {
-    db.run(`UPDATE HoiVien SET loai_the = 'Đã hủy' WHERE ma_hv = ?`, [req.body.maHv], () => {
+    db.run(`UPDATE HoiVien SET loai_the = 'Đã hủy' WHERE ma_hv = ?`, [req.body.maHv], (err) => {
+        if (err) return res.status(500).json({ success: false, message: err.message });
         res.json({ success: true, message: 'Đã hủy thẻ thành công!' });
     });
 });
 
+// --- 4. Cập nhật thông tin ---
 router.post('/members/update', (req, res) => {
-    db.run(`UPDATE HoiVien SET ho_ten = ?, sdt = ? WHERE ma_hv = ?`, [req.body.hoTen, req.body.sdt, req.body.maHv], () => {
+    db.run(`UPDATE HoiVien SET ho_ten = ?, sdt = ? WHERE ma_hv = ?`, [req.body.hoTen, req.body.sdt, req.body.maHv], (err) => {
+        if (err) return res.status(500).json({ success: false, message: err.message });
         res.json({ success: true, message: 'Đã cập nhật thông tin khách hàng!' });
     });
 });
 
+// --- 5. Xóa vĩnh viễn ---
 router.post('/members/delete', (req, res) => {
     const { maHv } = req.body;
     db.serialize(() => {
         db.run(`DELETE FROM GiaoDich WHERE ma_hv = ?`, [maHv]);
         db.run(`DELETE FROM CheckInLog WHERE ma_hv = ?`, [maHv]);
-        db.run(`DELETE FROM HoiVien WHERE ma_hv = ?`, [maHv], () => {
+        db.run(`DELETE FROM HoiVien WHERE ma_hv = ?`, [maHv], (err) => {
+            if (err) return res.status(500).json({ success: false, message: err.message });
             res.json({ success: true, message: 'Đã xóa vĩnh viễn khách hàng khỏi hệ thống!' });
         });
     });
+});
+
+// ================= CẬP NHẬT: API CHO GIAN HÀNG MUA SẮM =================
+router.get('/shop/products', (req, res) => {
+    db.all(`SELECT * FROM SanPham`, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+router.post('/shop/checkout', (req, res) => {
+    const { hoivien_id, items, total_amount } = req.body;
+    // Xử lý giỏ hàng và lưu hóa đơn tại đây
+    res.json({ success: true, message: 'Thanh toán thành công' });
 });
 
 router.get('/notifications', (req, res) => {
