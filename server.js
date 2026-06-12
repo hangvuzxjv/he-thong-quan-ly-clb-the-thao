@@ -9,11 +9,12 @@ const PORT = 8080;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Gắn bộ định tuyến API
+// Gắn bộ định tuyến API 
 app.use('/api', apiRoutes);
 
 // Khởi động hệ thống
 app.listen(PORT, () => {
-    console.log(` [TITAN FITNESS] Server Core đang chạy ổn định tại cổng ${PORT}`);
-    console.log(` Truy cập giao diện: http://localhost:${PORT}`);
+    console.log(` [TITAN FITNESS] Server Core đang chạy ổn định tại cổng ${PORT}`);
+    console.log(` Truy cập giao diện: http://localhost:${PORT}`);
 });
+
