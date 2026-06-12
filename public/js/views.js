@@ -141,101 +141,65 @@ const ViewTemplates = {
         `;
     },
 
-    // ================= TRANG ĐĂNG KÝ HỘI VIÊN (GIAO DIỆN MỚI 2.0) =================
+    // ================= TRANG ĐĂNG KÝ HỘI VIÊN (CHỈ CÓ FORM ĐĂNG KÝ - CĂN GIỮA) =================
     register: () => `
-        <div class="fade-in p-2 p-md-4">
-            <div class="card shadow-lg border-0 overflow-hidden rounded-4" style="min-height: 600px; background: #ffffff;">
-                <div class="row g-0 h-100">
+        <div class="fade-in p-2 p-md-4 d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 120px);">
+            <div class="card shadow-lg border-0 overflow-hidden rounded-4 w-100" style="max-width: 550px; background: #ffffff;">
+                <div class="p-4 p-xl-5 d-flex flex-column justify-content-center position-relative">
                     
-                    <div class="col-lg-5 p-4 p-xl-5 d-flex flex-column justify-content-center position-relative">
-                        <div class="position-absolute top-0 start-0 w-100 h-100 bg-primary opacity-10" style="clip-path: polygon(0 0, 100% 0, 100% 120px, 0 80px);"></div>
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-primary opacity-10" style="clip-path: polygon(0 0, 100% 0, 100% 120px, 0 80px);"></div>
 
-                        <div class="text-center mb-5 position-relative z-1 mt-3">
-                            <div class="avatar text-white rounded-circle d-flex justify-content-center align-items-center mx-auto mb-3 shadow-sm" style="width: 75px; height: 75px; font-size: 32px; background: linear-gradient(135deg, #4f46e5, #3b82f6);">
-                                <i class="fa-solid fa-user-astronaut"></i>
-                            </div>
-                            <h4 class="fw-bolder text-dark mb-1">Tạo Hồ Sơ Khách Hàng</h4>
-                            <p class="text-muted small mb-0">Thiết lập thẻ hội viên định danh</p>
+                    <div class="text-center mb-5 position-relative z-1 mt-3">
+                        <div class="avatar text-white rounded-circle d-flex justify-content-center align-items-center mx-auto mb-3 shadow-sm" style="width: 75px; height: 75px; font-size: 32px; background: linear-gradient(135deg, #4f46e5, #3b82f6);">
+                            <i class="fa-solid fa-user-astronaut"></i>
                         </div>
-
-                        <div class="row g-3 position-relative z-1">
-                            <div class="col-12">
-                                <div class="form-floating shadow-sm mb-2">
-                                    <input type="text" id="regName" class="form-control border-0 bg-light rounded-3 fw-bold text-primary px-4" placeholder="Họ và tên">
-                                    <label class="text-muted px-3"><i class="fa-solid fa-signature me-2"></i>Họ và tên <span class="text-danger">*</span></label>
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-md-6">
-                                <div class="form-floating shadow-sm mb-2">
-                                    <input type="tel" id="regPhone" class="form-control border-0 bg-light rounded-3 fw-bold text-primary px-4" placeholder="Số điện thoại">
-                                    <label class="text-muted px-3"><i class="fa-solid fa-phone me-2"></i>Số điện thoại <span class="text-danger">*</span></label>
-                                </div>
-                            </div>
-
-                            <div class="col-12 col-md-6">
-                                <div class="form-floating shadow-sm mb-2">
-                                    <select id="regGender" class="form-select border-0 bg-light rounded-3 fw-bold text-primary px-4">
-                                        <option value="Nam">Nam</option>
-                                        <option value="Nữ">Nữ</option>
-                                        <option value="Khác">Khác</option>
-                                    </select>
-                                    <label class="text-muted px-3"><i class="fa-solid fa-venus-mars me-2"></i>Giới tính</label>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <div class="form-floating shadow-sm mb-4">
-                                    <input type="email" id="regEmail" class="form-control border-0 bg-light rounded-3 px-4" placeholder="Email">
-                                    <label class="text-muted px-3"><i class="fa-solid fa-envelope me-2"></i>Email (Tùy chọn)</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button onclick="AppController.registerMember()" class="btn btn-primary btn-lg w-100 fw-bolder shadow-lg mt-3 rounded-pill fs-6 py-3 position-relative z-1" style="background: linear-gradient(135deg, #4f46e5, #3b82f6); border: none; transition: 0.3s;">
-                            KHỞI TẠO & THANH TOÁN <i class="fa-solid fa-arrow-right ms-2"></i>
-                        </button>
+                        <h4 class="fw-bolder text-dark mb-1">Tạo Hồ Sơ Khách Hàng</h4>
+                        <p class="text-muted small mb-0">Thiết lập thẻ hội viên định danh</p>
                     </div>
 
-                    <div class="col-lg-7 d-none d-lg-block position-relative">
-                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1500" alt="Gym" class="w-100 h-100 position-absolute" style="object-fit: cover; left: 0; top: 0;">
-                        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to right, #0f172a 0%, rgba(15, 23, 42, 0.4) 100%);"></div>
-
-                        <div class="position-absolute top-50 start-50 translate-middle w-75 p-5 rounded-4 shadow-lg" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2);">
-                            <div class="mb-4">
-                                <span class="badge bg-primary bg-gradient text-uppercase px-3 py-2 mb-3 shadow-sm rounded-pill tracking-wider">Đặc Quyền Hội Viên</span>
-                                <h2 class="fw-bolder mb-2 display-5 lh-sm text-white">Đẳng cấp sống khỏe<br>cùng <span class="text-info">TITAN</span></h2>
+                    <div class="row g-3 position-relative z-1">
+                        <div class="col-12">
+                            <div class="form-floating shadow-sm mb-2">
+                                <input type="text" id="regName" class="form-control border-0 bg-light rounded-3 fw-bold text-primary px-4" placeholder="Họ và tên">
+                                <label class="text-muted px-3"><i class="fa-solid fa-signature me-2"></i>Họ và tên <span class="text-danger">*</span></label>
                             </div>
+                        </div>
 
-                            <ul class="list-unstyled mb-0 mt-4 text-white">
-                                <li class="mb-4 d-flex align-items-center">
-                                    <div class="bg-white bg-opacity-25 p-2 rounded-circle me-3 d-flex justify-content-center align-items-center shadow-sm flex-shrink-0" style="width: 50px; height: 50px;">
-                                        <i class="fa-solid fa-bolt text-warning fs-5"></i>
-                                    </div>
-                                    <span class="fw-medium fs-5">Check-in siêu tốc</span>
-                                </li>
-                                <li class="mb-4 d-flex align-items-center">
-                                    <div class="bg-white bg-opacity-25 p-2 rounded-circle me-3 d-flex justify-content-center align-items-center shadow-sm flex-shrink-0" style="width: 50px; height: 50px;">
-                                        <i class="fa-solid fa-gift text-info fs-5"></i>
-                                    </div>
-                                    <span class="fw-medium fs-5">Tích lũy điểm thưởng đổi quà</span>
-                                </li>
-                                <li class="d-flex align-items-center">
-                                    <div class="bg-white bg-opacity-25 p-2 rounded-circle me-3 d-flex justify-content-center align-items-center shadow-sm flex-shrink-0" style="width: 50px; height: 50px;">
-                                        <i class="fa-solid fa-spa text-primary fs-5"></i>
-                                    </div>
-                                    <span class="fw-medium fs-5">Trải nghiệm miễn phí Xông hơi & Relax</span>
-                                </li>
-                            </ul>
+                        <div class="col-12 col-md-6">
+                            <div class="form-floating shadow-sm mb-2">
+                                <input type="tel" id="regPhone" class="form-control border-0 bg-light rounded-3 fw-bold text-primary px-4" placeholder="Số điện thoại">
+                                <label class="text-muted px-3"><i class="fa-solid fa-phone me-2"></i>Số điện thoại <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <div class="form-floating shadow-sm mb-2">
+                                <select id="regGender" class="form-select border-0 bg-light rounded-3 fw-bold text-primary px-4">
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                                <label class="text-muted px-3"><i class="fa-solid fa-venus-mars me-2"></i>Giới tính</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating shadow-sm mb-4">
+                                <input type="email" id="regEmail" class="form-control border-0 bg-light rounded-3 px-4" placeholder="Email">
+                                <label class="text-muted px-3"><i class="fa-solid fa-envelope me-2"></i>Email (Tùy chọn)</label>
+                            </div>
                         </div>
                     </div>
 
+                    <button onclick="AppController.registerMember()" class="btn btn-primary btn-lg w-100 fw-bolder shadow-lg mt-3 rounded-pill fs-6 py-3 position-relative z-1" style="background: linear-gradient(135deg, #4f46e5, #3b82f6); border: none; transition: 0.3s;">
+                        KHỞI TẠO & THANH TOÁN <i class="fa-solid fa-arrow-right ms-2"></i>
+                    </button>
                 </div>
             </div>
         </div>
     `,
 
-    // ================= TRANG QUẦY THU NGÂN (POS) GIAO DIỆN HIỆN ĐẠI MỚI =================
+    // ================= TRANG QUẦY THU NGÂN  =================
     pos: () => `
         <style>
             .pos-card-preview { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(255,255,255,0.1); }
@@ -287,7 +251,7 @@ const ViewTemplates = {
                                         <div class="bg-warning text-dark rounded-circle d-flex justify-content-center align-items-center me-2 shadow-sm" style="width: 32px; height: 32px;">
                                             <i class="fa-solid fa-ticket"></i>
                                         </div>
-                                        <h6 class="fw-bolder text-dark mb-0">Vé Khách Vãng Lai</h6>
+                                        <h6 class="fw-bolder text-dark mb-0">Vé Khách Lẻ</h6>
                                     </div>
                                     <small class="text-muted fw-medium ms-5">Tập ngày không cần hồ sơ.</small>
                                 </div>
@@ -362,7 +326,7 @@ const ViewTemplates = {
         </div>
     `,
 
-    // ================= 1. DANH BẠ HỘI VIÊN =================
+    // ================= 1. DANH BẠ HỘI VIÊN (TỐI ƯU HIỂN THỊ TRÊN DI ĐỘNG) =================
     'danh-ba': (data, currentPage, totalPages) => `
     <div class="fade-in p-2 p-md-4">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
@@ -373,26 +337,34 @@ const ViewTemplates = {
             </div>
         </div>
         
-        <div class="table-responsive bg-white shadow-sm rounded-4 border-0">
-            <table class="table table-hover align-middle mb-0" style="min-width: 500px;">
-                <thead class="table-light"><tr><th class="ps-4">Mã thẻ</th><th>Họ tên</th><th>SĐT</th></tr></thead>
-                <tbody>
-                    ${(data || []).map(m => `
-                        <tr class="member-row">
-                            <td class="member-id fw-bold text-secondary small ps-4">${m.ma_hv}</td>
-                            <td class="member-name text-primary fw-bold" style="cursor:pointer;" onclick="AppController.viewMemberDetail('${m.ma_hv}')">${m.ho_ten}</td>
-                            <td class="member-phone small">${m.sdt}</td>
-                        </tr>`).join('')}
-                </tbody>
-            </table>
+        <div class="bg-white shadow-sm rounded-4 border-0 overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 text-nowrap">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3 ps-md-4 py-3">Mã thẻ</th>
+                            <th class="py-3">Họ tên</th>
+                            <th class="pe-3 pe-md-4 py-3 text-end text-md-start">SĐT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${(data || []).map(m => `
+                            <tr class="member-row">
+                                <td class="member-id fw-bold text-secondary small ps-3 ps-md-4">${m.ma_hv}</td>
+                                <td class="member-name text-primary fw-bold" style="cursor:pointer;" onclick="AppController.viewMemberDetail('${m.ma_hv}')">${m.ho_ten}</td>
+                                <td class="member-phone small pe-3 pe-md-4 text-end text-md-start">${m.sdt}</td>
+                            </tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>
         </div>
         
         <nav class="mt-4 d-flex justify-content-center justify-content-md-start">
             <ul class="pagination pagination-sm shadow-sm rounded-3 overflow-hidden">
                 <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link text-dark fw-bold border-0" href="#" onclick="AppController.loadPage('danh-ba', ${currentPage - 1})">Trước</a>
+                    <a class="page-link text-dark fw-bold border-0 px-3" href="#" onclick="AppController.loadPage('danh-ba', ${currentPage - 1})">Trước</a>
                 </li>
-                <li class="page-item disabled"><a class="page-link bg-light text-primary fw-bold px-3 border-0">${currentPage} / ${totalPages}</a></li>
+                <li class="page-item disabled"><a class="page-link bg-light text-primary fw-bold px-4 border-0">${currentPage} / ${totalPages}</a></li>
                 <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
                     <a class="page-link text-dark fw-bold border-0" href="#" onclick="AppController.loadPage('danh-ba', ${currentPage + 1})">Sau</a>
                 </li>
