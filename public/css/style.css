@@ -1,5 +1,11 @@
 /* --- CÁC STYLE CŨ --- */
-.sidebar { width: 260px; background: #0f172a; min-height: 100vh; }
+.sidebar { 
+    width: 260px; 
+    min-width: 260px; /* Thêm dòng này để ép cứng không bị nén */
+    flex-shrink: 0;   /* Thêm dòng này để không bị co lại khi màn hình nhỏ */
+    background: #0f172a; 
+    min-height: 100vh; 
+}
 
 .nav-link-custom { 
     display: flex; 
@@ -10,6 +16,9 @@
     border-radius: 8px; 
     margin-bottom: 5px; 
     transition: 0.3s; 
+    white-space: nowrap; /* Thêm dòng này: Ép chữ không rớt xuống dòng */
+    overflow: hidden;    /* Thêm dòng này: Cắt phần thừa nếu có */
+    text-overflow: ellipsis; /* Thêm dòng này: Hiển thị ... nếu quá dài */
 }
 .nav-link-custom i { 
     width: 26px; 

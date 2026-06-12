@@ -141,80 +141,90 @@ const ViewTemplates = {
         `;
     },
 
-    // ================= TRANG ĐĂNG KÝ HỘI VIÊN =================
+    // ================= TRANG ĐĂNG KÝ HỘI VIÊN (GIAO DIỆN MỚI 2.0) =================
     register: () => `
-        <div class="fade-in p-2 p-md-3">
-            <div class="card shadow-sm border-0 overflow-hidden rounded-4" style="min-height: 550px;">
+        <div class="fade-in p-2 p-md-4">
+            <div class="card shadow-lg border-0 overflow-hidden rounded-4" style="min-height: 600px; background: #ffffff;">
                 <div class="row g-0 h-100">
                     
-                    <div class="col-lg-5 p-4 p-xl-5 bg-white d-flex flex-column justify-content-center">
-                        <div class="text-center mb-4">
-                            <div class="avatar bg-primary bg-opacity-10 text-primary rounded-circle d-flex justify-content-center align-items-center mx-auto mb-3" style="width: 60px; height: 60px; font-size: 24px;">
-                                <i class="fa-solid fa-user-plus"></i>
+                    <div class="col-lg-5 p-4 p-xl-5 d-flex flex-column justify-content-center position-relative">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 bg-primary opacity-10" style="clip-path: polygon(0 0, 100% 0, 100% 120px, 0 80px);"></div>
+
+                        <div class="text-center mb-5 position-relative z-1 mt-3">
+                            <div class="avatar text-white rounded-circle d-flex justify-content-center align-items-center mx-auto mb-3 shadow-sm" style="width: 75px; height: 75px; font-size: 32px; background: linear-gradient(135deg, #4f46e5, #3b82f6);">
+                                <i class="fa-solid fa-user-astronaut"></i>
                             </div>
-                            <h5 class="fw-bold text-dark">Tạo Hồ Sơ Khách Hàng</h5>
-                            <p class="text-muted small mb-0">Khởi tạo mã định danh và cấp thẻ nhanh</p>
+                            <h4 class="fw-bolder text-dark mb-1">Tạo Hồ Sơ Khách Hàng</h4>
+                            <p class="text-muted small mb-0">Thiết lập thẻ hội viên định danh</p>
                         </div>
-                        
-                        <div class="row g-3">
+
+                        <div class="row g-3 position-relative z-1">
                             <div class="col-12">
-                                <label class="fw-bold small mb-1 text-muted">Họ và Tên <span class="text-danger">*</span></label>
-                                <input type="text" id="regName" class="form-control form-control-lg bg-light border-0 shadow-sm fs-6">
-                            </div>
-                            
-                            <div class="col-12 col-md-6">
-                                <label class="fw-bold small mb-1 text-muted">Số điện thoại <span class="text-danger">*</span></label>
-                                <input type="tel" id="regPhone" class="form-control form-control-lg bg-light border-0 shadow-sm fs-6">
+                                <div class="form-floating shadow-sm mb-2">
+                                    <input type="text" id="regName" class="form-control border-0 bg-light rounded-3 fw-bold text-primary px-4" placeholder="Họ và tên">
+                                    <label class="text-muted px-3"><i class="fa-solid fa-signature me-2"></i>Họ và tên <span class="text-danger">*</span></label>
+                                </div>
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="fw-bold small mb-1 text-muted">Giới tính</label>
-                                <select id="regGender" class="form-select form-select-lg bg-light border-0 text-dark shadow-sm fs-6">
-                                    <option value="Nam">Nam</option>
-                                    <option value="Nữ">Nữ</option>
-                                    <option value="Khác">Khác</option>
-                                </select>
+                                <div class="form-floating shadow-sm mb-2">
+                                    <input type="tel" id="regPhone" class="form-control border-0 bg-light rounded-3 fw-bold text-primary px-4" placeholder="Số điện thoại">
+                                    <label class="text-muted px-3"><i class="fa-solid fa-phone me-2"></i>Số điện thoại <span class="text-danger">*</span></label>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-floating shadow-sm mb-2">
+                                    <select id="regGender" class="form-select border-0 bg-light rounded-3 fw-bold text-primary px-4">
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                        <option value="Khác">Khác</option>
+                                    </select>
+                                    <label class="text-muted px-3"><i class="fa-solid fa-venus-mars me-2"></i>Giới tính</label>
+                                </div>
                             </div>
 
                             <div class="col-12">
-                                <label class="fw-bold small mb-1 text-muted">Email (Tùy chọn)</label>
-                                <input type="email" id="regEmail" class="form-control form-control-lg bg-light border-0 shadow-sm fs-6">
+                                <div class="form-floating shadow-sm mb-4">
+                                    <input type="email" id="regEmail" class="form-control border-0 bg-light rounded-3 px-4" placeholder="Email">
+                                    <label class="text-muted px-3"><i class="fa-solid fa-envelope me-2"></i>Email (Tùy chọn)</label>
+                                </div>
                             </div>
                         </div>
-                        
-                        <button onclick="AppController.registerMember()" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm mt-4 rounded-3 fs-6 py-3">
-                            Khởi Tạo & Thanh Toán <i class="fa-solid fa-arrow-right ms-2"></i>
+
+                        <button onclick="AppController.registerMember()" class="btn btn-primary btn-lg w-100 fw-bolder shadow-lg mt-3 rounded-pill fs-6 py-3 position-relative z-1" style="background: linear-gradient(135deg, #4f46e5, #3b82f6); border: none; transition: 0.3s;">
+                            KHỞI TẠO & THANH TOÁN <i class="fa-solid fa-arrow-right ms-2"></i>
                         </button>
                     </div>
 
                     <div class="col-lg-7 d-none d-lg-block position-relative">
                         <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1500" alt="Gym" class="w-100 h-100 position-absolute" style="object-fit: cover; left: 0; top: 0;">
-                        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to right, #0f172a 0%, rgba(15, 23, 42, 0.5) 100%);"></div>
-                        
-                        <div class="position-relative z-1 p-5 d-flex flex-column justify-content-center h-100 text-white w-100">
+                        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to right, #0f172a 0%, rgba(15, 23, 42, 0.4) 100%);"></div>
+
+                        <div class="position-absolute top-50 start-50 translate-middle w-75 p-5 rounded-4 shadow-lg" style="background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2);">
                             <div class="mb-4">
-                                <span class="badge bg-primary text-uppercase px-3 py-2 mb-3 shadow-sm rounded-pill">Thẻ Hội Viên Điện Tử</span>
-                                <h2 class="fw-bolder mb-2 display-6 lh-sm">Đẳng cấp sống khỏe<br>cùng <span class="text-primary">TITAN</span></h2>
+                                <span class="badge bg-primary bg-gradient text-uppercase px-3 py-2 mb-3 shadow-sm rounded-pill tracking-wider">Đặc Quyền Hội Viên</span>
+                                <h2 class="fw-bolder mb-2 display-5 lh-sm text-white">Đẳng cấp sống khỏe<br>cùng <span class="text-info">TITAN</span></h2>
                             </div>
-                            
-                            <ul class="list-unstyled mb-0 mt-2">
-                                <li class="mb-3 d-flex align-items-center">
-                                    <div class="bg-primary bg-opacity-25 p-2 rounded-circle me-3 d-flex justify-content-center align-items-center shadow-sm flex-shrink-0" style="width: 40px; height: 40px;">
-                                        <i class="fa-solid fa-qrcode text-primary"></i>
+
+                            <ul class="list-unstyled mb-0 mt-4 text-white">
+                                <li class="mb-4 d-flex align-items-center">
+                                    <div class="bg-white bg-opacity-25 p-2 rounded-circle me-3 d-flex justify-content-center align-items-center shadow-sm flex-shrink-0" style="width: 50px; height: 50px;">
+                                        <i class="fa-solid fa-bolt text-warning fs-5"></i>
                                     </div>
-                                    <span class="fw-medium small">Check-in nhận diện QR Code siêu tốc 3s</span>
+                                    <span class="fw-medium fs-5">Check-in siêu tốc</span>
                                 </li>
-                                <li class="mb-3 d-flex align-items-center">
-                                    <div class="bg-primary bg-opacity-25 p-2 rounded-circle me-3 d-flex justify-content-center align-items-center shadow-sm flex-shrink-0" style="width: 40px; height: 40px;">
-                                        <i class="fa-solid fa-gift text-primary"></i>
+                                <li class="mb-4 d-flex align-items-center">
+                                    <div class="bg-white bg-opacity-25 p-2 rounded-circle me-3 d-flex justify-content-center align-items-center shadow-sm flex-shrink-0" style="width: 50px; height: 50px;">
+                                        <i class="fa-solid fa-gift text-info fs-5"></i>
                                     </div>
-                                    <span class="fw-medium small">Tích lũy điểm thưởng đổi quà</span>
+                                    <span class="fw-medium fs-5">Tích lũy điểm thưởng đổi quà</span>
                                 </li>
                                 <li class="d-flex align-items-center">
-                                    <div class="bg-primary bg-opacity-25 p-2 rounded-circle me-3 d-flex justify-content-center align-items-center shadow-sm flex-shrink-0" style="width: 40px; height: 40px;">
-                                        <i class="fa-solid fa-spa text-primary"></i>
+                                    <div class="bg-white bg-opacity-25 p-2 rounded-circle me-3 d-flex justify-content-center align-items-center shadow-sm flex-shrink-0" style="width: 50px; height: 50px;">
+                                        <i class="fa-solid fa-spa text-primary fs-5"></i>
                                     </div>
-                                    <span class="fw-medium small">Trải nghiệm miễn phí Xông hơi & Relax</span>
+                                    <span class="fw-medium fs-5">Trải nghiệm miễn phí Xông hơi & Relax</span>
                                 </li>
                             </ul>
                         </div>
@@ -225,77 +235,126 @@ const ViewTemplates = {
         </div>
     `,
 
-    // ================= TRANG QUẦY THU NGÂN (POS) =================
+    // ================= TRANG QUẦY THU NGÂN (POS) GIAO DIỆN HIỆN ĐẠI MỚI =================
     pos: () => `
+        <style>
+            .pos-card-preview { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(255,255,255,0.1); }
+            .pos-pattern { background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0); background-size: 20px 20px; }
+            .btn-check:checked + .btn-outline-success { background-color: #198754; color: white; border-color: #198754; box-shadow: 0 4px 10px rgba(25,135,84,0.3); }
+            .btn-check:checked + .btn-outline-primary { background-color: #0d6efd; color: white; border-color: #0d6efd; box-shadow: 0 4px 10px rgba(13,110,253,0.3); }
+            .focus-ring:focus-within { box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25); }
+        </style>
         <div class="row g-3 g-md-4 fade-in p-2 p-md-3">
+            
             <div class="col-lg-5">
-                <div class="stat-card h-100 bg-white rounded-4 border-0 d-flex flex-column align-items-center text-center shadow-sm p-3 p-md-4">
-                    <h6 class="fw-bold text-primary border-bottom pb-3 mb-4 w-100 text-start">
-                        <i class="fa-solid fa-id-card me-2"></i> Thẻ Hội Viên Hệ Thống
-                    </h6>
-                    
-                    <div id="member-card-preview" class="p-4 bg-light rounded-4 border w-100 d-flex flex-column align-items-center justify-content-center" style="min-height: 250px;">
-                        <i class="fa-solid fa-qrcode text-muted mb-3" style="font-size: 40px; opacity: 0.5;"></i>
-                        <p class="text-muted mb-0 small">Nhập mã hội viên bên phải</p>
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                    <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0 px-4">
+                        <h6 class="fw-bolder text-dark mb-0"><i class="fa-solid fa-id-badge text-primary me-2"></i>ĐỊNH DANH HỘI VIÊN</h6>
                     </div>
-                    
-                    <button onclick="AppController.printCurrentCard()" class="btn btn-outline-primary fw-bold mt-4 w-100 py-2 rounded-3 fs-6" id="btnPrintCard" disabled>
-                        <i class="fa-solid fa-print me-2"></i> In Thẻ Cứng
-                    </button>
+                    <div class="card-body p-4 d-flex flex-column align-items-center">
+                        
+                        <div id="member-card-preview" class="w-100 rounded-4 shadow pos-card-preview position-relative overflow-hidden d-flex flex-column align-items-center justify-content-center transition-all" style="min-height: 240px;">
+                            <div class="position-absolute top-0 start-0 w-100 h-100 opacity-25 pos-pattern"></div>
+                            <div class="z-1 text-center w-100 p-3">
+                                <i class="fa-solid fa-qrcode text-white opacity-50 mb-3" style="font-size: 55px;"></i>
+                                <p class="text-white opacity-75 mb-0 small fw-medium">Chưa có thông tin thẻ</p>
+                            </div>
+                        </div>
+                        
+                        <div class="w-100 mt-4">
+                            <label class="fw-bold small mb-2 text-muted">Nhập hoặc dùng máy quét mã thẻ</label>
+                            <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden border focus-ring">
+                                <span class="input-group-text bg-light border-0"><i class="fa-solid fa-barcode text-primary"></i></span>
+                                <input type="text" id="billCode" class="form-control border-0 bg-light fw-bold text-primary fs-5 text-uppercase" placeholder="VD: HV123456" oninput="AppController.previewMemberCard()">
+                            </div>
+                        </div>
+                        
+                        <button onclick="AppController.printCurrentCard()" class="btn btn-outline-primary fw-bold mt-4 w-100 py-3 rounded-3 d-flex justify-content-center align-items-center gap-2" id="btnPrintCard" disabled>
+                            <i class="fa-solid fa-print"></i> In Thẻ Cứng Cho Khách
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <div class="col-lg-7">
                 <div class="row g-3 g-md-4">
+                    
                     <div class="col-12">
-                        <div class="stat-card bg-warning bg-opacity-10 border border-warning border-opacity-50 shadow-sm rounded-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center p-3 p-md-4 gap-3">
-                            <div>
-                                <h6 class="fw-bold text-dark mb-1"><i class="fa-solid fa-ticket-simple text-warning me-2"></i> Khách Lẻ (Vé Ngày)</h6>
-                                <small class="text-muted">Tập vé ngày. Không cần mã hồ sơ.</small>
+                        <div class="card border-0 shadow-sm rounded-4" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);">
+                            <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                                <div>
+                                    <div class="d-flex align-items-center mb-1">
+                                        <div class="bg-warning text-dark rounded-circle d-flex justify-content-center align-items-center me-2 shadow-sm" style="width: 32px; height: 32px;">
+                                            <i class="fa-solid fa-ticket"></i>
+                                        </div>
+                                        <h6 class="fw-bolder text-dark mb-0">Vé Khách Vãng Lai</h6>
+                                    </div>
+                                    <small class="text-muted fw-medium ms-5">Tập ngày không cần hồ sơ.</small>
+                                </div>
+                                <button onclick="AppController.sellDailyTicket()" class="btn btn-warning fw-bolder px-4 py-3 py-md-2 shadow-sm rounded-pill text-dark border-0">
+                                    THU 50.000 ₫
+                                </button>
                             </div>
-                            <button onclick="AppController.sellDailyTicket()" class="btn btn-warning fw-bold px-4 py-2 shadow-sm rounded-3 w-100 w-md-auto">Thu 50.000 ₫</button>
                         </div>
                     </div>
 
                     <div class="col-12">
-                        <div class="stat-card bg-white border-0 shadow-sm rounded-4 p-3 p-md-4">
-                            <h6 class="fw-bold text-primary border-bottom pb-3 mb-4">
-                                <i class="fa-solid fa-credit-card me-2"></i> Thanh Toán Gói Hội Viên
-                            </h6>
-                            
-                            <div class="mb-3">
-                                <label class="fw-bold small mb-1 text-muted">Mã thẻ hội viên</label>
-                                <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden">
-                                    <span class="input-group-text bg-light border-0"><i class="fa-solid fa-barcode text-muted"></i></span>
-                                    <input type="text" id="billCode" class="form-control border-0 bg-light fw-bold text-primary fs-6" placeholder="Nhập mã..." oninput="AppController.previewMemberCard()">
+                        <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                            <div class="card-header bg-transparent border-bottom-0 pt-4 pb-0 px-4">
+                                <h6 class="fw-bolder text-dark mb-0"><i class="fa-solid fa-credit-card text-success me-2"></i>THANH TOÁN GÓI TẬP</h6>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <label class="fw-bold small mb-2 text-muted">Chọn cấp độ gói</label>
+                                        <div class="position-relative">
+                                            <select id="billPackage" class="form-select form-select-lg bg-light border-0 shadow-sm rounded-3 fs-6 fw-medium text-dark ps-3 py-3 cursor-pointer">
+                                                <optgroup label="Gói Ưu Đãi (HSSV)">
+                                                    <option value="STUDENT_1M" data-price="350000">HSSV (1 Tháng) - 350.000 ₫</option>
+                                                    <option value="STUDENT_3M" data-price="950000">HSSV (3 Tháng) - 950.000 ₫</option>
+                                                </optgroup>
+                                                <optgroup label="Gói Gym Cơ Bản">
+                                                    <option value="GYM_1M" data-price="500000">Gym Cơ Bản (1 Tháng) - 500.000 ₫</option>
+                                                    <option value="GYM_3M" data-price="1400000">Gym Cơ Bản (3 Tháng) - 1.400.000 ₫</option>
+                                                    <option value="GYM_6M" data-price="2500000">Gym Cơ Bản (6 Tháng) - 2.500.000 ₫</option>
+                                                    <option value="GYM_12M" data-price="4500000">Gym Cơ Bản (1 Năm) - 4.500.000 ₫</option>
+                                                </optgroup>
+                                                <optgroup label="Gói VIP Đặc Quyền">
+                                                    <option value="VIP_1M" data-price="800000">VIP (1 Tháng) - 800.000 ₫</option>
+                                                    <option value="VIP_3M" data-price="2200000">VIP (3 Tháng) - 2.200.000 ₫</option>
+                                                    <option value="VIP_6M" data-price="4000000">VIP (6 Tháng) - 4.000.000 ₫</option>
+                                                    <option value="VIP_12M" data-price="7500000">VIP Thượng Hạng (1 Năm) - 7.500.000 ₫</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="fw-bold small mb-2 text-muted">Phương thức thanh toán</label>
+                                        <div class="d-flex gap-3">
+                                            <div class="flex-grow-1">
+                                                <input type="radio" class="btn-check" name="paymentMethod" id="methodCash" value="Tiền mặt" autocomplete="off" checked onchange="document.getElementById('billMethod').value = this.value">
+                                                <label class="btn btn-outline-success w-100 py-3 rounded-3 fw-bold shadow-sm d-flex flex-column align-items-center gap-2 bg-light border-0 transition-all" for="methodCash">
+                                                    <i class="fa-solid fa-money-bill-wave fs-4"></i> Tiền Mặt
+                                                </label>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <input type="radio" class="btn-check" name="paymentMethod" id="methodQR" value="Chuyển khoản" autocomplete="off" onchange="document.getElementById('billMethod').value = this.value">
+                                                <label class="btn btn-outline-primary w-100 py-3 rounded-3 fw-bold shadow-sm d-flex flex-column align-items-center gap-2 bg-light border-0 transition-all" for="methodQR">
+                                                    <i class="fa-solid fa-qrcode fs-4"></i> Mã QR
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="billMethod" value="Tiền mặt">
+                                    </div>
+                                    
+                                    <div class="col-12 mt-4">
+                                        <button onclick="AppController.upgradePackage()" class="btn btn-success btn-lg w-100 fw-bolder shadow rounded-3 py-3 fs-5 d-flex justify-content-center align-items-center gap-2 border-0" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                                            <i class="fa-solid fa-check-circle"></i> XÁC NHẬN THU TIỀN
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <div class="mb-3">
-                                <label class="fw-bold small mb-1 text-muted">Cấp độ gói tập</label>
-                                <select id="billPackage" class="form-select form-select-lg bg-light border-0 shadow-sm rounded-3 fs-6">
-                                <optgroup label="Gói Gym Cơ Bản">
-                                    <option value="GYM_1M" data-price="500000">Gym Cơ Bản (1 Tháng) - 500k ₫</option>
-                                    <option value="GYM_3M" data-price="1400000">Gym Cơ Bản (3 Tháng) - 1.4tr ₫</option>
-                                </optgroup>
-                                <optgroup label="Gói VIP Đặc Quyền">
-                                    <option value="VIP_6M" data-price="2500000">VIP Yoga & Gym (6T) - 2.5tr ₫</option>
-                                    <option value="VIP_12M" data-price="4500000">VIP Thượng Hạng (1N) - 4.5tr ₫</option>
-                                </optgroup>
-                                </select>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="fw-bold small mb-1 text-muted">Hình thức thanh toán</label>
-                                <select id="billMethod" class="form-select form-select-lg bg-light border-0 shadow-sm rounded-3 fs-6">
-                                    <option value="Tiền mặt">💵 Tiền mặt tại quầy</option>
-                                    <option value="Chuyển khoản">💳 Chuyển khoản (Mã QR)</option>
-                                </select>
-                            </div>
-                            
-                            <button onclick="AppController.upgradePackage()" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm rounded-3 py-3 mt-2 fs-6">
-                                <i class="fa-solid fa-check-circle me-2"></i> Xác Nhận Thu Tiền
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -345,9 +404,19 @@ const ViewTemplates = {
     shop: () => `
     <div class="fade-in p-2 p-md-3 row g-3 g-md-4">
         <div class="col-12 col-lg-8">
-            <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-store me-2"></i>Gian hàng mua sắm</h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-primary mb-0"><i class="fa-solid fa-store me-2"></i>Gian hàng mua sắm</h5>
+                <div class="input-group shadow-sm rounded-3 overflow-hidden w-50">
+                    <span class="input-group-text bg-white border-0"><i class="fa-solid fa-search text-primary"></i></span>
+                    <input type="text" id="shopSearchInput" class="form-control border-0" placeholder="Tìm sản phẩm..." onkeyup="AppController.searchProducts()">
+                </div>
+            </div>
+            
             <div id="shopProducts" class="row g-3"></div>
+            
+            <div id="shopPagination" class="mt-4 w-100 d-flex justify-content-center"></div>
         </div>
+        
         <div class="col-12 col-lg-4">
             <div class="card shadow-sm p-3 border-0 bg-white rounded-4 sticky-lg-top" style="top: 20px;">
                 <h6 class="border-bottom pb-2 mb-3 fw-bold text-dark"><i class="fa-solid fa-cart-shopping me-2 text-primary"></i>Giỏ hàng</h6>
@@ -358,11 +427,20 @@ const ViewTemplates = {
                     <span class="fw-bold text-secondary small">Tổng thanh toán:</span>
                     <h5 class="text-danger fw-bold mb-0" id="shopTotalAmount">0 ₫</h5>
                 </div>
+                
+                <div class="mb-3">
+                    <label class="fw-bold small mb-1 text-muted" for="shopCustomerPhone">SĐT Tích Điểm (Không bắt buộc)</label>
+                    <div class="input-group input-group-sm shadow-sm rounded-3 overflow-hidden">
+                        <span class="input-group-text bg-white border-0"><i class="fa-solid fa-phone text-muted"></i></span>
+                        <input type="tel" id="shopCustomerPhone" class="form-control border-0 bg-light" placeholder="Ví dụ: 0987654321">
+                    </div>
+                </div>
+
                 <div class="mb-3">
                     <label class="form-label small fw-bold text-muted">Phương thức:</label>
                     <select id="shopPaymentMethod" class="form-select border-0 shadow-sm small rounded-3 bg-light">
-                        <option value="Chuyển khoản">💳 QR Chuyển khoản</option>
-                        <option value="Tiền mặt">💵 Tiền mặt</option>
+                        <option value="Chuyển khoản">QR Chuyển khoản</option>
+                        <option value="Tiền mặt">Tiền mặt</option>
                     </select>
                 </div>
                 <button class="btn btn-success w-100 fw-bold py-3 shadow-sm fs-6 rounded-3" onclick="AppController.checkoutShop()">THANH TOÁN</button>

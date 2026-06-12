@@ -27,15 +27,15 @@
             
             <form id="loginForm" onsubmit="AppController.processLogin(event)">
                 <div class="mb-3 text-start">
-                    <label class="form-label small fw-bold text-dark">Tên đăng nhập</label>
+                    <label class="form-label small fw-bold text-dark">ID Nhân Sự</label>
                     <div class="input-group input-group-lg shadow-sm">
                         <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-user text-muted"></i></span>
-                        <input type="text" id="loginUsername" class="form-control border-start-0 bg-light fs-6" placeholder="admin hoặc letan_lan" required>
+                        <input type="text" id="loginUsername" class="form-control border-start-0 bg-light fs-6" placeholder="Nhập tên tài khoản..." required>
                     </div>
                 </div>
                 
                 <div class="mb-4 text-start">
-                    <label class="form-label small fw-bold text-dark">Mật khẩu bảo mật</label>
+                    <label class="form-label small fw-bold text-dark">Khóa Truy Cập</label>
                     <div class="input-group input-group-lg shadow-sm">
                         <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-lock text-muted"></i></span>
                         <input type="password" id="loginPassword" class="form-control border-start-0 bg-light fs-6" placeholder="••••••" required>
@@ -60,17 +60,15 @@
                 <a href="#" class="nav-item nav-link-custom active" data-target="dashboard">
                     <i class="fa-solid fa-chart-pie me-3"></i> Tổng Quan
                 </a>
+                  <a href="#" class="nav-item nav-link-custom" data-target="register">
+                    <i class="fa-solid fa-user-plus me-3"></i> Đăng ký hội viên
+                </a>
                 <a href="#" class="nav-item nav-link-custom" data-target="pos">
                     <i class="fa-solid fa-cash-register me-3"></i> Quầy Thu Ngân (POS)
                 </a>
-                <!-- Khôi phục menu Đăng ký hội viên -->
-                <a href="#" class="nav-item nav-link-custom" data-target="register">
-                    <i class="fa-solid fa-user-plus me-3"></i> Đăng ký hội viên
-                </a>
                 <a href="#" class="nav-item nav-link-custom" data-target="danh-ba">
-                    <i class="fa-solid fa-address-book me-3"></i> Danh bạ hội viên
+                    <i class="fa-solid fa-address-book me-3"></i> Danh sách hội viên
                 </a>
-                
                 <a href="#" class="nav-item nav-link-custom" data-target="shop">
                     <i class="fa-solid fa-bag-shopping me-3"></i> Gian hàng mua sắm
                 </a>
