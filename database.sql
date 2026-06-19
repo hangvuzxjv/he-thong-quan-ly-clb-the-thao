@@ -1,11 +1,14 @@
--- Chuyển hết sang VARCHAR để tránh lỗi "can't have a default value"
+-- Thiết lập chuẩn tiếng Việt (UTF8mb4) cho toàn bộ Database
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
 CREATE TABLE IF NOT EXISTS NhanSu (
     ma_nv VARCHAR(50) PRIMARY KEY,
     ho_ten VARCHAR(255) NOT NULL,
     username VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     vai_tro VARCHAR(100) NOT NULL
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO NhanSu (ma_nv, ho_ten, username, password, vai_tro) VALUES 
 ('NV01', 'Phan Huỳnh Phúc', 'admin', 'admin', 'Quản trị viên'),
@@ -19,7 +22,7 @@ CREATE TABLE IF NOT EXISTS HoiVien (
     loai_the VARCHAR(50) DEFAULT 'Chưa kích hoạt',
     ngay_dang_ky VARCHAR(20) NOT NULL,
     diem_thuong INTEGER DEFAULT 0
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS GiaoDich (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -31,7 +34,7 @@ CREATE TABLE IF NOT EXISTS GiaoDich (
     ngay_het_han VARCHAR(20) NOT NULL,
     nguoi_thu_tien VARCHAR(100) NOT NULL,
     FOREIGN KEY(ma_hv) REFERENCES HoiVien(ma_hv) ON DELETE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS VeLeKhachVangLai (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -39,7 +42,7 @@ CREATE TABLE IF NOT EXISTS VeLeKhachVangLai (
     so_tien INTEGER NOT NULL,
     ngay_ban VARCHAR(20) NOT NULL,
     nguoi_thu_tien VARCHAR(100) NOT NULL
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS CheckInLog (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -47,20 +50,20 @@ CREATE TABLE IF NOT EXISTS CheckInLog (
     khu_vuc VARCHAR(100) NOT NULL,
     thoi_gian VARCHAR(50) NOT NULL,
     FOREIGN KEY(ma_hv) REFERENCES HoiVien(ma_hv) ON DELETE CASCADE
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS Customers (
     id INT PRIMARY KEY AUTO_INCREMENT,
     phone VARCHAR(20) UNIQUE NOT NULL,
     points INTEGER DEFAULT 0
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS SanPham (
     id INT PRIMARY KEY AUTO_INCREMENT,
     ten_sanpham VARCHAR(255) UNIQUE NOT NULL,
     gia INTEGER NOT NULL,
     category VARCHAR(100)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO SanPham (ten_sanpham, gia, category) VALUES 
 ('Pre-workout C4', 550000, 'Supplement'),
