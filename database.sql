@@ -77,5 +77,5 @@ INSERT OR IGNORE INTO SanPham (ten_sanpham, gia, category) VALUES
 ('Băng quấn bảo vệ cổ tay', 85000, 'Phụ kiện'),
 ('Bình lắc Shaker 700ml', 95000, 'Phụ kiện'),
 ('Cân điện tử sức khỏe', 320000, 'Thiết bị'),
-('Quần đùi tập Gym Nam', 180000, 'Trang phục'),
+('Quần đùi tập Gym Nam', 180000, 'Trang phục'), 
 ('Đai lưng tập tạ', 290000, 'Phụ kiện');
