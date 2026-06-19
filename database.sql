@@ -1,67 +1,68 @@
+-- Chuyển hết sang VARCHAR để tránh lỗi "can't have a default value"
 CREATE TABLE IF NOT EXISTS NhanSu (
-    ma_nv TEXT PRIMARY KEY,
-    ho_ten TEXT NOT NULL,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    vai_tro TEXT NOT NULL
-);
+    ma_nv VARCHAR(50) PRIMARY KEY,
+    ho_ten VARCHAR(255) NOT NULL,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    vai_tro VARCHAR(100) NOT NULL
+) ENGINE=InnoDB;
 
-INSERT OR IGNORE INTO NhanSu (ma_nv, ho_ten, username, password, vai_tro) VALUES 
+INSERT IGNORE INTO NhanSu (ma_nv, ho_ten, username, password, vai_tro) VALUES 
 ('NV01', 'Phan Huỳnh Phúc', 'admin', 'admin', 'Quản trị viên'),
 ('NV02', 'Huỳnh Ngọc Minh Thư', 'letan_lan', '123456', 'Nhân viên trực cổng');
 
 CREATE TABLE IF NOT EXISTS HoiVien (
-    ma_hv TEXT PRIMARY KEY,
-    ho_ten TEXT NOT NULL,
-    sdt TEXT NOT NULL,
-    email TEXT,
-    loai_the TEXT DEFAULT 'Chưa kích hoạt',
-    ngay_dang_ky TEXT NOT NULL,
+    ma_hv VARCHAR(50) PRIMARY KEY,
+    ho_ten VARCHAR(255) NOT NULL,
+    sdt VARCHAR(20) NOT NULL,
+    email VARCHAR(255),
+    loai_the VARCHAR(50) DEFAULT 'Chưa kích hoạt',
+    ngay_dang_ky VARCHAR(20) NOT NULL,
     diem_thuong INTEGER DEFAULT 0
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS GiaoDich (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    ma_hv TEXT NOT NULL,
-    ten_goi TEXT NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ma_hv VARCHAR(50) NOT NULL,
+    ten_goi VARCHAR(255) NOT NULL,
     so_tien INTEGER NOT NULL,
-    phuong_thuc TEXT NOT NULL,
-    ngay_giao_dich TEXT NOT NULL,
-    ngay_het_han TEXT NOT NULL,
-    nguoi_thu_tien TEXT NOT NULL,
+    phuong_thuc VARCHAR(50) NOT NULL,
+    ngay_giao_dich VARCHAR(20) NOT NULL,
+    ngay_het_han VARCHAR(20) NOT NULL,
+    nguoi_thu_tien VARCHAR(100) NOT NULL,
     FOREIGN KEY(ma_hv) REFERENCES HoiVien(ma_hv) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS VeLeKhachVangLai (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    loai_ve TEXT NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    loai_ve VARCHAR(100) NOT NULL,
     so_tien INTEGER NOT NULL,
-    ngay_ban TEXT NOT NULL,
-    nguoi_thu_tien TEXT NOT NULL
-);
+    ngay_ban VARCHAR(20) NOT NULL,
+    nguoi_thu_tien VARCHAR(100) NOT NULL
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS CheckInLog (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    ma_hv TEXT NOT NULL,
-    khu_vuc TEXT NOT NULL,
-    thoi_gian TEXT NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ma_hv VARCHAR(50) NOT NULL,
+    khu_vuc VARCHAR(100) NOT NULL,
+    thoi_gian VARCHAR(50) NOT NULL,
     FOREIGN KEY(ma_hv) REFERENCES HoiVien(ma_hv) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS Customers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    phone TEXT UNIQUE NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    phone VARCHAR(20) UNIQUE NOT NULL,
     points INTEGER DEFAULT 0
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS SanPham (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    ten_sanpham TEXT UNIQUE NOT NULL,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    ten_sanpham VARCHAR(255) UNIQUE NOT NULL,
     gia INTEGER NOT NULL,
-    category TEXT
-);
+    category VARCHAR(100)
+) ENGINE=InnoDB;
 
-INSERT OR IGNORE INTO SanPham (ten_sanpham, gia, category) VALUES 
+INSERT IGNORE INTO SanPham (ten_sanpham, gia, category) VALUES 
 ('Pre-workout C4', 550000, 'Supplement'),
 ('BCAA Xtend', 450000, 'Supplement'),
 ('Mass Gainer Serious', 850000, 'Supplement'),

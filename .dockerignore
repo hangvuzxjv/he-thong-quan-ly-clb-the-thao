@@ -1,0 +1,10 @@
+cat <<EOF > .dockerignore
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+qlclbtt.db
+add_more_products.js
+setup.js
+EOF

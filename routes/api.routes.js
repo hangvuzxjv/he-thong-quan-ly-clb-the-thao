@@ -1,15 +1,19 @@
 const express = require('express');
 const router = express.Router();
 
-// LƯU Ý QUAN TRỌNG: Lấy db từ request (do server.js truyền vào), không tự require sqlite3 nữa
+// Lấy db (MySQL Pool) từ request
 const db = (req) => req.db; 
 
 // ================= API: ĐĂNG NHẬP VỚI DATABASE =================
 router.post('/auth/login', (req, res) => {
     const { username, password } = req.body;
-    db(req).get(`SELECT * FROM NhanSu WHERE username = ? AND password = ?`, [username, password], (err, user) => {
-        if (err) return res.status(500).json({ success: false, error: 'Lỗi máy chủ cơ sở dữ liệu' });
+    db(req).query(`SELECT * FROM NhanSu WHERE username = ? AND password = ?`, [username, password], (err, results) => {
+        if (err) {
+            console.error(">>> LỖI LOGIN:", err.message);
+            return res.status(500).json({ success: false, error: 'Lỗi máy chủ cơ sở dữ liệu' });
+        }
         
+        const user = results ? results[0] : null; 
         if (user) {
             res.json({ success: true, user: { id: user.ma_nv, name: user.ho_ten, role: user.vai_tro } });
         } else {
@@ -24,9 +28,12 @@ router.post('/members/register', (req, res) => {
     const maHv = 'HV' + Date.now().toString().slice(-6); 
     const today = new Date().toISOString().split('T')[0];
 
-    db(req).run(`INSERT INTO HoiVien (ma_hv, ho_ten, sdt, email, ngay_dang_ky) VALUES (?, ?, ?, ?, ?)`, 
-    [maHv, hoTen, sdt, '', today], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
+    db(req).query(`INSERT INTO HoiVien (ma_hv, ho_ten, sdt, email, ngay_dang_ky) VALUES (?, ?, ?, ?, ?)`, 
+    [maHv, hoTen, sdt, '', today], (err, results) => {
+        if (err) {
+            console.error(">>> LỖI REGISTER:", err.message);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ success: true, maHv, hoTen, message: 'Thành công' });
     });
 });
@@ -45,13 +52,19 @@ router.post('/members/upgrade', (req, res) => {
     today.setMonth(today.getMonth() + months);
     const ngayHetHan = today.toISOString().split('T')[0];
 
-    db(req).serialize(() => {
-        db(req).run(`INSERT INTO GiaoDich (ma_hv, ten_goi, so_tien, phuong_thuc, ngay_giao_dich, ngay_het_han, nguoi_thu_tien) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)`, 
-                [maHv, tenGoi, giaTien, phuongThuc, ngayMua, ngayHetHan, nguoiThuTien]);
+    db(req).query(`INSERT INTO GiaoDich (ma_hv, ten_goi, so_tien, phuong_thuc, ngay_giao_dich, ngay_het_han, nguoi_thu_tien) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)`, 
+            [maHv, tenGoi, giaTien, phuongThuc, ngayMua, ngayHetHan, nguoiThuTien], (err) => {
+        if (err) {
+            console.error(">>> LỖI UPGRADE GIAODICH:", err.message);
+            return res.status(500).json({ error: err.message });
+        }
                 
-        db(req).run(`UPDATE HoiVien SET loai_the = ? WHERE ma_hv = ?`, [tenGoi, maHv], (err) => {
-            if (err) return res.status(500).json({ error: err.message });
+        db(req).query(`UPDATE HoiVien SET loai_the = ? WHERE ma_hv = ?`, [tenGoi, maHv], (err2) => {
+            if (err2) {
+                console.error(">>> LỖI UPGRADE UPDATE:", err2.message);
+                return res.status(500).json({ error: err2.message });
+            }
             res.json({ success: true, message: 'Thành công' });
         });
     });
@@ -61,24 +74,34 @@ router.post('/operations/ticket', (req, res) => {
     const { nguoiThuTien } = req.body;
     const today = new Date().toISOString().split('T')[0];
 
-    db(req).run(`INSERT INTO VeLeKhachVangLai (loai_ve, so_tien, ngay_ban, nguoi_thu_tien) VALUES ('Vé Tập Gym 1 Ngày', 50000, ?, ?)`, 
-    [today, nguoiThuTien], function(err) {
-        if (err) return res.status(500).json({ error: err.message });
+    db(req).query(`INSERT INTO VeLeKhachVangLai (loai_ve, so_tien, ngay_ban, nguoi_thu_tien) VALUES ('Vé Tập Gym 1 Ngày', 50000, ?, ?)`, 
+    [today, nguoiThuTien], (err) => {
+        if (err) {
+            console.error(">>> LỖI TICKET:", err.message);
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ success: true, message: 'Đã xuất vé lẻ thành công' });
     });
 });
 
 router.post('/operations/checkin', (req, res) => {
     const { maHv, khuVuc } = req.body;
-    const now = new Date().toLocaleString('vi-VN');
+    // Fix định dạng ngày tháng chuẩn cho MySQL
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-    db(req).get(`SELECT * FROM HoiVien WHERE ma_hv = ?`, [maHv], (err, user) => {
+    db(req).query(`SELECT * FROM HoiVien WHERE ma_hv = ?`, [maHv], (err, results) => {
+        if (err) {
+            console.error(">>> LỖI CHECKIN SELECT:", err.message);
+            return res.status(500).json({ error: 'Lỗi truy vấn DB' });
+        }
+        const user = results ? results[0] : null;
         if (!user) return res.status(400).json({ error: 'Mã thẻ không tồn tại!' });
         if (user.loai_the === 'Chưa kích hoạt' || user.loai_the === 'Đã hủy') return res.status(403).json({ error: 'Thẻ chưa kích hoạt hoặc đã bị hủy!' });
         if (khuVuc === 'Khu Gym VIP' && !user.loai_the.includes('VIP')) return res.status(403).json({ error: 'Từ chối: Thẻ của bạn không có quyền vào Khu VIP!' });
 
-        db(req).run(`INSERT INTO CheckInLog (ma_hv, khu_vuc, thoi_gian) VALUES (?, ?, ?)`, [maHv, khuVuc, now], () => {
-            db(req).run(`UPDATE HoiVien SET diem_thuong = diem_thuong + 10 WHERE ma_hv = ?`, [maHv]);
+        db(req).query(`INSERT INTO CheckInLog (ma_hv, khu_vuc, thoi_gian) VALUES (?, ?, ?)`, [maHv, khuVuc, now], (err) => {
+            if (err) console.error(">>> LỖI CHECKIN INSERT:", err.message);
+            db(req).query(`UPDATE HoiVien SET diem_thuong = diem_thuong + 10 WHERE ma_hv = ?`, [maHv]);
             res.json({ success: true, user: user.ho_ten, message: `Mở cửa: Check-in ${khuVuc} thành công!` });
         });
     });
@@ -89,9 +112,13 @@ router.get('/dashboard/stats', (req, res) => {
     const currentMonthStr = todayStr.substring(0, 7); 
     const currentYearStr = todayStr.substring(0, 4); 
 
-    db(req).all(`SELECT * FROM GiaoDich`, [], (err, giaoDichList) => {
-        db(req).all(`SELECT * FROM VeLeKhachVangLai`, [], (err, veLeList) => {
-            db(req).get(`SELECT COUNT(*) as totalMembers FROM HoiVien`, (err, r2) => {
+    db(req).query(`SELECT * FROM GiaoDich`, [], (err, giaoDichList) => {
+        if (err) console.error(">>> LỖI STATS GIAODICH:", err.message);
+        db(req).query(`SELECT * FROM VeLeKhachVangLai`, [], (err, veLeList) => {
+            if (err) console.error(">>> LỖI STATS VELE:", err.message);
+            db(req).query(`SELECT COUNT(*) as totalMembers FROM HoiVien`, (err, countResults) => {
+                if (err) console.error(">>> LỖI STATS HOIVIEN:", err.message);
+                const r2 = countResults ? countResults[0] : null;
                 
                 let stats = {
                     totalMembers: r2?.totalMembers || 0,
@@ -134,13 +161,15 @@ router.get('/dashboard/filter', (req, res) => {
     let tienMat = 0;
     let chuyenKhoan = 0;
 
-    db(req).all(`SELECT SUM(so_tien) as total FROM VeLeKhachVangLai WHERE ngay_ban LIKE ?`, [likeQuery], (err, vRes) => {
-        tienMat += (vRes[0]?.total || 0);
+    db(req).query(`SELECT SUM(so_tien) as total FROM VeLeKhachVangLai WHERE ngay_ban LIKE ?`, [likeQuery], (err, vRes) => {
+        if (err) console.error(">>> LỖI FILTER VELE:", err.message);
+        tienMat += (vRes && vRes[0]?.total) ? Number(vRes[0].total) : 0;
         
-        db(req).all(`SELECT phuong_thuc, SUM(so_tien) as total FROM GiaoDich WHERE ngay_giao_dich LIKE ? GROUP BY phuong_thuc`, [likeQuery], (err, gRes) => {
+        db(req).query(`SELECT phuong_thuc, SUM(so_tien) as total FROM GiaoDich WHERE ngay_giao_dich LIKE ? GROUP BY phuong_thuc`, [likeQuery], (err, gRes) => {
+            if (err) console.error(">>> LỖI FILTER GIAODICH:", err.message);
             (gRes || []).forEach(g => {
-                if (g.phuong_thuc === 'Tiền mặt') tienMat += g.total;
-                else chuyenKhoan += g.total;
+                if (g.phuong_thuc === 'Tiền mặt') tienMat += Number(g.total);
+                else chuyenKhoan += Number(g.total);
             });
             
             res.json({ success: true, tong: tienMat + chuyenKhoan, tienMat: tienMat, chuyenKhoan: chuyenKhoan });
@@ -148,51 +177,52 @@ router.get('/dashboard/filter', (req, res) => {
     });
 });
 
-// ================= PHÂN TRANG DANH SÁCH HỘI VIÊN =================
 router.get('/members/list', (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
-    db(req).serialize(() => {
-        db(req).all(`SELECT * FROM HoiVien ORDER BY ngay_dang_ky DESC LIMIT ? OFFSET ?`, [limit, offset], (err, rows) => {
+    db(req).query(`SELECT * FROM HoiVien ORDER BY ngay_dang_ky DESC LIMIT ? OFFSET ?`, [limit, offset], (err, rows) => {
+        if (err) {
+            console.error(">>> LỖI MEMBERS LIST:", err.message);
+            return res.status(500).json({ error: err.message });
+        }
+        
+        db(req).query(`SELECT COUNT(*) as total FROM HoiVien`, (err, countResults) => {
             if (err) return res.status(500).json({ error: err.message });
             
-            db(req).get(`SELECT COUNT(*) as total FROM HoiVien`, (err, countRow) => {
-                if (err) return res.status(500).json({ error: err.message });
-                
-                res.json({ 
-                    members: rows, 
-                    total: countRow.total,
-                    totalPages: Math.ceil(countRow.total / limit),
-                    currentPage: page
-                });
+            const countRow = countResults[0];
+            res.json({ 
+                members: rows, 
+                total: countRow.total,
+                totalPages: Math.ceil(countRow.total / limit),
+                currentPage: page
             });
         });
     });
 });
 
-// --- CHI TIẾT HỘI VIÊN VÀ LỊCH SỬ GIAO DỊCH ---
 router.get('/members/detail/:id', (req, res) => {
     const maHv = req.params.id;
-    db(req).get(`SELECT * FROM HoiVien WHERE ma_hv = ?`, [maHv], (err, user) => {
+    db(req).query(`SELECT * FROM HoiVien WHERE ma_hv = ?`, [maHv], (err, results) => {
+        const user = results ? results[0] : null;
         if (!user) return res.status(404).json({ error: 'Không tìm thấy hội viên' });
         
-        db(req).all(`SELECT * FROM GiaoDich WHERE ma_hv = ? ORDER BY id DESC LIMIT 10`, [maHv], (err, gdList) => {
+        db(req).query(`SELECT * FROM GiaoDich WHERE ma_hv = ? ORDER BY id DESC LIMIT 10`, [maHv], (err, gdList) => {
             res.json({ user, package: gdList });
         });
     });
 });
 
 router.post('/members/cancel', (req, res) => {
-    db(req).run(`UPDATE HoiVien SET loai_the = 'Đã hủy' WHERE ma_hv = ?`, [req.body.maHv], (err) => {
+    db(req).query(`UPDATE HoiVien SET loai_the = 'Đã hủy' WHERE ma_hv = ?`, [req.body.maHv], (err) => {
         if (err) return res.status(500).json({ success: false, message: err.message });
         res.json({ success: true, message: 'Đã hủy thẻ thành công!' });
     });
 });
 
 router.post('/members/update', (req, res) => {
-    db(req).run(`UPDATE HoiVien SET ho_ten = ?, sdt = ? WHERE ma_hv = ?`, [req.body.hoTen, req.body.sdt, req.body.maHv], (err) => {
+    db(req).query(`UPDATE HoiVien SET ho_ten = ?, sdt = ? WHERE ma_hv = ?`, [req.body.hoTen, req.body.sdt, req.body.maHv], (err) => {
         if (err) return res.status(500).json({ success: false, message: err.message });
         res.json({ success: true, message: 'Đã cập nhật thông tin khách hàng!' });
     });
@@ -200,19 +230,20 @@ router.post('/members/update', (req, res) => {
 
 router.post('/members/delete', (req, res) => {
     const { maHv } = req.body;
-    db(req).serialize(() => {
-        db(req).run(`DELETE FROM GiaoDich WHERE ma_hv = ?`, [maHv]);
-        db(req).run(`DELETE FROM CheckInLog WHERE ma_hv = ?`, [maHv]);
-        db(req).run(`DELETE FROM HoiVien WHERE ma_hv = ?`, [maHv], (err) => {
+    db(req).query(`DELETE FROM GiaoDich WHERE ma_hv = ?`, [maHv], (err) => {
+        if (err) return res.status(500).json({ success: false, message: err.message });
+        db(req).query(`DELETE FROM CheckInLog WHERE ma_hv = ?`, [maHv], (err) => {
             if (err) return res.status(500).json({ success: false, message: err.message });
-            res.json({ success: true, message: 'Đã xóa vĩnh viễn khách hàng khỏi hệ thống!' });
+            db(req).query(`DELETE FROM HoiVien WHERE ma_hv = ?`, [maHv], (err) => {
+                if (err) return res.status(500).json({ success: false, message: err.message });
+                res.json({ success: true, message: 'Đã xóa vĩnh viễn khách hàng khỏi hệ thống!' });
+            });
         });
     });
 });
 
-// ================= GIAN HÀNG MUA SẮM VÀ TÍCH ĐIỂM =================
 router.get('/shop/products', (req, res) => {
-    db(req).all(`SELECT * FROM SanPham`, [], (err, rows) => {
+    db(req).query(`SELECT * FROM SanPham`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
     });
@@ -220,10 +251,7 @@ router.get('/shop/products', (req, res) => {
 
 router.post('/checkout', (req, res) => {
     const { cartItems, phone, totalAmount, nguoiThuTien } = req.body;
-
-    if (!cartItems || cartItems.length === 0) {
-        return res.status(400).json({ success: false, message: 'Giỏ hàng đang trống' });
-    }
+    if (!cartItems || cartItems.length === 0) return res.status(400).json({ success: false, message: 'Giỏ hàng đang trống' });
 
     const tenCacSanPham = cartItems.map(item => `${item.ten_sanpham} (x${item.qty})`).join(', ');
 
@@ -231,37 +259,26 @@ router.post('/checkout', (req, res) => {
         const earnedPoints = Math.floor(totalAmount / 10000);
         const today = new Date().toISOString().split('T')[0];
 
-        db(req).get(`SELECT * FROM HoiVien WHERE sdt = ?`, [phone], (err, hoivien) => {
-            if (err) return res.status(500).json({ success: false, message: 'Lỗi truy vấn cơ sở dữ liệu' });
-
+        db(req).query(`SELECT * FROM HoiVien WHERE sdt = ?`, [phone], (err, results) => {
+            const hoivien = results ? results[0] : null;
             if (hoivien) {
                 const maHv = hoivien.ma_hv;
-                
-                db(req).serialize(() => {
-                    db(req).run(`UPDATE HoiVien SET diem_thuong = diem_thuong + ? WHERE ma_hv = ?`, [earnedPoints, maHv]);
-                    db(req).run(`INSERT INTO GiaoDich (ma_hv, ten_goi, so_tien, phuong_thuc, ngay_giao_dich, ngay_het_han, nguoi_thu_tien) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?)`, 
-                            [maHv, `Mua Shop: ${tenCacSanPham}`, totalAmount, 'Thanh toán Shop', today, today, nguoiThuTien || 'Hệ thống'], (err) => {
-                        if (err) console.error("Lỗi ghi giao dịch shop:", err);
-                        
-                        return res.json({ 
-                            success: true, 
-                            earnedPoints: earnedPoints, 
-                            totalPoints: hoivien.diem_thuong + earnedPoints, 
-                            message: 'Thanh toán thành công' 
-                        });
+                db(req).query(`UPDATE HoiVien SET diem_thuong = diem_thuong + ? WHERE ma_hv = ?`, [earnedPoints, maHv], () => {
+                    db(req).query(`INSERT INTO GiaoDich (ma_hv, ten_goi, so_tien, phuong_thuc, ngay_giao_dich, ngay_het_han, nguoi_thu_tien) VALUES (?, ?, ?, ?, ?, ?, ?)`, 
+                    [maHv, `Mua Shop: ${tenCacSanPham}`, totalAmount, 'Thanh toán Shop', today, today, nguoiThuTien || 'Hệ thống'], (err) => {
+                        return res.json({ success: true, message: 'Thanh toán thành công' });
                     });
                 });
             } else {
-                db(req).get(`SELECT * FROM Customers WHERE phone = ?`, [phone], (err, row) => {
+                db(req).query(`SELECT * FROM Customers WHERE phone = ?`, [phone], (err, custResults) => {
+                    const row = custResults ? custResults[0] : null;
                     if (row) {
-                        const newTotal = row.points + earnedPoints;
-                        db(req).run(`UPDATE Customers SET points = ? WHERE phone = ?`, [newTotal, phone], () => {
-                            return res.json({ success: true, earnedPoints: earnedPoints, totalPoints: newTotal, message: 'Thanh toán thành công' });
+                        db(req).query(`UPDATE Customers SET points = points + ? WHERE phone = ?`, [earnedPoints, phone], () => {
+                            return res.json({ success: true, message: 'Thanh toán thành công' });
                         });
                     } else {
-                        db(req).run(`INSERT INTO Customers (phone, points) VALUES (?, ?)`, [phone, earnedPoints], () => {
-                            return res.json({ success: true, earnedPoints: earnedPoints, totalPoints: earnedPoints, message: 'Thanh toán thành công' });
+                        db(req).query(`INSERT INTO Customers (phone, points) VALUES (?, ?)`, [phone, earnedPoints], () => {
+                            return res.json({ success: true, message: 'Thanh toán thành công' });
                         });
                     }
                 });
@@ -272,52 +289,26 @@ router.post('/checkout', (req, res) => {
     }
 });
 
-// ================= API: CHUÔNG THÔNG BÁO =================
 router.get('/notifications', (req, res) => {
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0]; 
-    
     const next3Days = new Date(today);
     next3Days.setDate(today.getDate() + 3);
     const next3DaysStr = next3Days.toISOString().split('T')[0];
 
     let notifications = [];
 
-    // 1. Cảnh báo sắp hết hạn
-    db(req).all(`SELECT * FROM GiaoDich WHERE ngay_het_han >= ? AND ngay_het_han <= ? AND ten_goi NOT LIKE 'Mua Shop%'`, 
+    db(req).query(`SELECT * FROM GiaoDich WHERE ngay_het_han >= ? AND ngay_het_han <= ? AND ten_goi NOT LIKE 'Mua Shop%'`, 
     [todayStr, next3DaysStr], (err, expList) => {
-        
         if (expList && expList.length > 0) {
-            notifications.push({ 
-                type: 'warning', icon: 'fa-triangle-exclamation', 
-                text: `Cảnh báo: Có <b class="text-danger">${expList.length} hội viên</b> sắp hết hạn thẻ (trong 3 ngày tới).` 
-            });
+            notifications.push({ type: 'warning', icon: 'fa-triangle-exclamation', text: `Cảnh báo: Có ${expList.length} hội viên sắp hết hạn thẻ.` });
         }
-
-        // 2. Tóm tắt quét thẻ hôm nay
-        const vnDateStr = today.toLocaleDateString('vi-VN'); 
-        const checkinLike = `%${vnDateStr}%`;
-        db(req).get(`SELECT COUNT(*) as count FROM CheckInLog WHERE thoi_gian LIKE ?`, [checkinLike], (err, cRow) => {
+        db(req).query(`SELECT COUNT(*) as count FROM CheckInLog WHERE thoi_gian LIKE ?`, [`%${todayStr}%`], (err, countResults) => {
+            const cRow = countResults ? countResults[0] : null;
             if (cRow && cRow.count > 0) {
-                notifications.push({ 
-                    type: 'info', icon: 'fa-qrcode', 
-                    text: `Hôm nay đã có <b>${cRow.count} lượt</b> quét thẻ vào cổng.` 
-                });
+                notifications.push({ type: 'info', icon: 'fa-qrcode', text: `Hôm nay đã có ${cRow.count} lượt quét thẻ.` });
             }
-
-            // 3. Tóm tắt doanh thu hôm nay
-            db(req).get(`SELECT SUM(so_tien) as t1 FROM GiaoDich WHERE ngay_giao_dich = ?`, [todayStr], (err, gRow) => {
-                db(req).get(`SELECT SUM(so_tien) as t2 FROM VeLeKhachVangLai WHERE ngay_ban = ?`, [todayStr], (err, vRow) => {
-                    const totalRev = (gRow?.t1 || 0) + (vRow?.t2 || 0);
-                    if (totalRev > 0) {
-                        notifications.push({ 
-                            type: 'success', icon: 'fa-sack-dollar', 
-                            text: `Doanh thu trong ngày: <b class="text-success">${totalRev.toLocaleString()} ₫</b>.` 
-                        });
-                    }
-                    res.json(notifications);
-                });
-            });
+            res.json(notifications);
         });
     });
 });

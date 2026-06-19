@@ -1,28 +1,41 @@
 version: '3.8'
 
 services:
-  # Cấu hình Database (Sử dụng MySQL)
   db:
     image: mysql:8.0
     container_name: clb_thethao_db
     restart: always
     environment:
-      MYSQL_DATABASE: clb_thethao_management
-      MYSQL_ROOT_PASSWORD: rootpassword
+      - MYSQL_DATABASE=clb_thethao_management
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_ROOT_HOST=%
+    command: --default-authentication-plugin=mysql_native_password
     ports:
-      - "3306:3306"
+      - "3306:3306"  # ĐÚNG: Database chạy cổng 3306
     volumes:
       - db_data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  # Cấu hình môi trường chạy ứng dụng (Ví dụ sử dụng Java/Node.js)
   app:
-    image: node:18-alpine # Thay bằng openjdk:17 nếu nhóm code Java
+    build: .
     container_name: clb_thethao_app
     restart: always
-    ports:
-      - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:3000"  # ĐÚNG: Map cổng 8080 của máy chủ vào cổng 3000 của App
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=clb_thethao_management
+      - PORT=3000    # Cổng mà Node.js đang lắng nghe
 
 volumes:
   db_data:
