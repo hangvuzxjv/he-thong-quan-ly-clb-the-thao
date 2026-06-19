@@ -326,11 +326,11 @@ const ViewTemplates = {
         </div>
     `,
 
-    // ================= 1. DANH BẠ HỘI VIÊN (TỐI ƯU HIỂN THỊ TRÊN DI ĐỘNG) =================
+    // ================= 1. DANH SÁCH HỘI VIÊN (TỐI ƯU HIỂN THỊ TRÊN DI ĐỘNG) =================
     'danh-ba': (data, currentPage, totalPages) => `
     <div class="fade-in p-2 p-md-4">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
-            <h5 class="fw-bold text-primary mb-0">Danh bạ hội viên</h5>
+            <h5 class="fw-bold text-primary mb-0">Danh sách hội viên</h5>
             <div class="input-group shadow-sm rounded-3 overflow-hidden w-100" style="max-width: 400px;">
                 <span class="input-group-text bg-white border-0"><i class="fa-solid fa-search text-primary"></i></span>
                 <input type="text" id="searchInput" class="form-control border-0" placeholder="Tìm tên, SĐT, mã thẻ..." onkeyup="AppController.searchMember()">
