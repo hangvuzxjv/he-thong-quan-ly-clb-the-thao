@@ -1,4 +1,8 @@
-
+-- ============================================================
+-- DATABASE: HỆ THỐNG QUẢN LÝ CLB THỂ THAO / PHÒNG GYM
+-- Mô tả: Quản lý nhân sự, hội viên, giao dịch gói tập,
+--        vé lẻ khách vãng lai, lịch sử check-in và shop bán đồ
+-- ============================================================
 
 -- 1. BẢNG NHÂN SỰ
 -- Lưu thông tin tài khoản đăng nhập của nhân viên hệ thống
